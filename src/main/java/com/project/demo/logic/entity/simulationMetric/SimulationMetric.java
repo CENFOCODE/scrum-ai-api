@@ -1,4 +1,4 @@
-package com.project.demo.logic.entity.feedback;
+package com.project.demo.logic.entity.simulationMetric;
 
 import com.project.demo.logic.entity.simulation.Simulation;
 import com.project.demo.logic.entity.user.User;
@@ -8,8 +8,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.util.Date;
 
 @Entity
-@Table(name = "feedback")
-public class Feedback {
+@Table(name = "simulation_metrics")
+public class SimulationMetric {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,14 +23,20 @@ public class Feedback {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false, length = 500)
-    private String message;
+    @Column(name = "metric_name", nullable = false, length = 100)
+    private String metricName;
+
+    @Column(name = "metric_category", nullable = false, length = 50)
+    private String metricCategory;
+
+    @Column(name = "metric_value", nullable = false)
+    private Double metricValue;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Date createdAt;
 
-    public Feedback() {}
+    public SimulationMetric() {}
 
     public long getId() {
         return id;
@@ -56,12 +62,28 @@ public class Feedback {
         this.user = user;
     }
 
-    public String getMessage() {
-        return message;
+    public String getMetricName() {
+        return metricName;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMetricName(String metricName) {
+        this.metricName = metricName;
+    }
+
+    public String getMetricCategory() {
+        return metricCategory;
+    }
+
+    public void setMetricCategory(String metricCategory) {
+        this.metricCategory = metricCategory;
+    }
+
+    public Double getMetricValue() {
+        return metricValue;
+    }
+
+    public void setMetricValue(Double metricValue) {
+        this.metricValue = metricValue;
     }
 
     public Date getCreatedAt() {

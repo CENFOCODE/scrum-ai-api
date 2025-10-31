@@ -1,14 +1,13 @@
 package com.project.demo.logic.entity.user;
-import com.project.demo.logic.entity.achievements.Achievements;
+import com.project.demo.logic.entity.achievements.Achievement;
 import com.project.demo.logic.entity.feedback.Feedback;
 import com.project.demo.logic.entity.history.History;
 import com.project.demo.logic.entity.improvementPlan.ImprovementPlan;
 import com.project.demo.logic.entity.notification.Notification;
-import com.project.demo.logic.entity.order.Order;
 import com.project.demo.logic.entity.rol.Role;
 import com.project.demo.logic.entity.simulation.Simulation;
 import com.project.demo.logic.entity.simulationUser.SimulationUser;
-import com.project.demo.logic.entity.simulation_metric.SimulationMetric;
+import com.project.demo.logic.entity.simulationMetric.SimulationMetric;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -62,19 +61,14 @@ public class User implements UserDetails {
         return List.of(authority);
     }
 
-    //Relations
-
     @OneToMany(mappedBy = "user")
-    private List<SimulationUser> simulationUser;
+    private List<SimulationUser> simulationUsers;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Role role;
 
     @OneToMany(mappedBy = "user")
     private List<Notification> notifications;
-
-    @OneToMany(mappedBy = "user")
-    private List<ImprovementPlan>  improvementPlan;
 
     @OneToMany(mappedBy = "createdBy")
     private List<Simulation> simulations;
@@ -86,7 +80,7 @@ public class User implements UserDetails {
     private List<SimulationMetric> metrics;
 
     @OneToMany(mappedBy = "user")
-    private List<Achievements> achievements;
+    private List<Achievement> achievements;
 
     @OneToMany(mappedBy = "user")
     private List<ImprovementPlan> improvementPlans;
@@ -94,8 +88,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<History> historyList;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<Order> orders;
 
     // Constructors
     public User() {}
@@ -186,14 +178,6 @@ public class User implements UserDetails {
         return role;
     }
 
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
-    }
-
     public User setRole(Role role) {
         this.role = role;
 
@@ -225,11 +209,11 @@ public class User implements UserDetails {
     }
 
     public List<SimulationUser> getSimulationUser() {
-        return simulationUser;
+        return simulationUsers;
     }
 
     public void setSimulationUser(List<SimulationUser> simulationUser) {
-        this.simulationUser = simulationUser;
+        this.simulationUsers = simulationUser;
     }
 
     public List<Notification> getNotifications() {
@@ -241,11 +225,11 @@ public class User implements UserDetails {
     }
 
     public List<ImprovementPlan> getImprovementPlan() {
-        return improvementPlan;
+        return improvementPlans;
     }
 
     public void setImprovementPlan(List<ImprovementPlan> improvementPlan) {
-        this.improvementPlan = improvementPlan;
+        this.improvementPlans = improvementPlan;
     }
 
     public List<Simulation> getSimulations() {
@@ -272,11 +256,11 @@ public class User implements UserDetails {
         this.metrics = metrics;
     }
 
-    public List<Achievements> getAchievements() {
+    public List<Achievement> getAchievements() {
         return achievements;
     }
 
-    public void setAchievements(List<Achievements> achievements) {
+    public void setAchievements(List<Achievement> achievements) {
         this.achievements = achievements;
     }
 

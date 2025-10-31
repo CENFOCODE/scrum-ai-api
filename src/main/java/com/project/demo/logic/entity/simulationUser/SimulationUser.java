@@ -4,14 +4,14 @@ import com.project.demo.logic.entity.simulation.Simulation;
 import com.project.demo.logic.entity.user.User;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "simulation_users")
 public class SimulationUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -23,8 +23,8 @@ public class SimulationUser {
 
     private String scrumRole;
 
-    @Column(nullable = false, name = "assigned_at")
-    private LocalDateTime assignedAt = LocalDateTime.now();
+    @Column(nullable = false, name = "assigned_at", updatable = false)
+    private Date assignedAt;
 
     public SimulationUser() {
     }
@@ -53,11 +53,11 @@ public class SimulationUser {
         this.simulation = simulation;
     }
 
-    public LocalDateTime getAssignedAt() {
+    public Date getAssignedAt() {
         return assignedAt;
     }
 
-    public void setAssignedAt(LocalDateTime assignedAt) {
+    public void setAssignedAt(Date assignedAt) {
         this.assignedAt = assignedAt;
     }
 

@@ -6,12 +6,12 @@ import com.project.demo.logic.entity.history.History;
 import com.project.demo.logic.entity.improvementPlan.ImprovementPlan;
 import com.project.demo.logic.entity.scenario.Scenario;
 import com.project.demo.logic.entity.simulationUser.SimulationUser;
-import com.project.demo.logic.entity.simulation_metric.SimulationMetric;
+import com.project.demo.logic.entity.simulationMetric.SimulationMetric;
 import com.project.demo.logic.entity.user.User;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -19,7 +19,7 @@ import java.util.List;
 public class Simulation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "scenario_id", nullable = false)
@@ -32,20 +32,20 @@ public class Simulation {
     @Column(name = "difficulty_level", nullable = false)
     private String difficultyLevel;
 
-    @Column(name = "start_date",  nullable = false)
-    private LocalDateTime startDate = LocalDateTime.now();
+    @Column(name = "start_date",  nullable = false, updatable = false)
+    private Date startDate;
 
     @Column(name = "end_date")
-    private LocalDateTime endDate;
+    private Date endDate;
 
-    @Column(name = "status", nullable = false, length = 50)
+    @Column(nullable = false, length = 50)
     private String status = "active";
 
-    @Column(name = "average_score", precision = 5, scale = 2)
-    private BigDecimal averageScore;
+    @Column(name = "average_score")
+    private Double averageScore;
 
     @OneToMany(mappedBy = "simulation")
-    private List<SimulationUser> simulationUserList ;
+    private List<SimulationUser> simulationUserList;
 
     @OneToMany(mappedBy = "simulation")
     private List<Feedback> feedbackList;
@@ -53,7 +53,7 @@ public class Simulation {
     @OneToMany(mappedBy = "simulation")
     private List<SimulationMetric> metrics;
 
-    @OneToMany(mappedBy = "simulation")
+    @OneToMany(mappedBy = "relatedSimulation")
     private List<ImprovementPlan> improvementPlans;
 
     @OneToMany(mappedBy = "simulation")
@@ -97,19 +97,19 @@ public class Simulation {
         this.difficultyLevel = difficultyLevel;
     }
 
-    public LocalDateTime getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDateTime startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDateTime getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDateTime endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
@@ -121,11 +121,11 @@ public class Simulation {
         this.status = status;
     }
 
-    public BigDecimal getAverageScore() {
+    public Double getAverageScore() {
         return averageScore;
     }
 
-    public void setAverageScore(BigDecimal averageScore) {
+    public void setAverageScore(Double averageScore) {
         this.averageScore = averageScore;
     }
 
