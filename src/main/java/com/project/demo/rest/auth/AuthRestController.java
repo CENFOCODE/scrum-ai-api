@@ -74,29 +74,35 @@ public class AuthRestController {
         if (credential == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Missing credential");
         }
-        GoogleIdToken idToken = null;
-        GoogleIdToken.Payload payload;
+
         try {
+            // Verificar el token de Google
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
                     new NetHttpTransport(),
                     GsonFactory.getDefaultInstance()
             )
                     .setAudience(Collections.singletonList(clientId))
                     .build();
-            idToken = verifier.verify(credential);
+
+            GoogleIdToken idToken = verifier.verify(credential);
             if (idToken == null) {
                 idToken = GoogleIdToken.parse(GsonFactory.getDefaultInstance(), credential);
             }
-            payload = idToken.getPayload();
+
+            GoogleIdToken.Payload payload = idToken.getPayload();
+
+            // Verificar audiencia y email
             if (!payload.getAudience().equals(clientId)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid audience");
             }
+
             if (!Boolean.TRUE.equals(payload.getEmailVerified())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email not verified by Google");
             }
+
             String email = payload.getEmail();
             String fullName = (String) payload.get("given_name");
-            String LastName = (String) payload.get("family_name");
+            String lastName = (String) payload.get("family_name");
             System.out.println("Login attempt from: " + email);
 
 
@@ -107,22 +113,25 @@ public class AuthRestController {
                 user = optionalUser.get();
                 System.out.println("Usuario existente: " + email);
             } else {
-                user = new User();
-                user.setName(fullName);
-                user.setLastname(LastName);
-                user.setEmail(email);
-                user.setGoogleAccount(true);
-                user.setAuthProvider("google");
-                user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
-
                 Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
                 if (optionalRole.isEmpty()) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Role not found");
                 }
-                user.setRole(optionalRole.get());
+
+
+                user = new User(
+                        fullName,
+                        lastName,
+                        email,
+                        true,
+                        "google",
+                        passwordEncoder.encode(UUID.randomUUID().toString()),
+                        optionalRole.get()
+                );
+
 
                 user = userRepository.save(user);
-                System.out.println("Nuevo usuario guardado: " + email);
+
             }
 
             String jwtToken = jwtService.generateToken(user);
@@ -139,6 +148,7 @@ public class AuthRestController {
                     .body("Error processing Google login: " + e.getMessage());
         }
     }
+
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
