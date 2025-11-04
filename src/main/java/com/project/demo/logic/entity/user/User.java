@@ -54,7 +54,15 @@ public class User implements UserDetails {
 
     @Column(name = "reset_token")
     private String resetToken;
-
+    public User(String name, String lastname, String email, boolean googleAccount, String authProvider, String password, Role role) {
+        this.name = name;
+        this.lastname = lastname;
+        this.email = email;
+        this.googleAccount = googleAccount;
+        this.authProvider = authProvider;
+        this.password = password;
+        this.role = role;
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role.getName().toString());
