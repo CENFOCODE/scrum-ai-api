@@ -2,7 +2,9 @@ package com.project.demo.logic.entity.auth;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;
 
+@Service
 public class EmailService {
     private final JavaMailSender mailSender;
     private final String ADMIN_GMAIL = "cenfocode@gmail.com";
