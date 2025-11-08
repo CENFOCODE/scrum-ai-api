@@ -9,22 +9,75 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * WebSocketHandler
+ * -------------------------------------------------------------
+ * Manejador central de WebSocket para la señalización de WebRTC
+ * dentro de ScrumAI. Este componente NO transmite audio/video,
+ * solamente envía y recibe mensajes de control entre usuarios:
+ *
+ *  - Crear salas
+ *  - Unirse a salas
+ *  - Invitar usuarios
+ *  - Enviar/recibir Offer, Answer, ICE candidates
+ *  - Manejar desconexiones y reconexiones
+ *
+ * Funciona como un "router" de mensajes basado en:
+ *  - Sala (room)
+ *  - Usuario objetivo (to)
+ *  - Usuario emisor (from)
+ *
+ * Es completamente stateless respecto a medios multimedia,
+ * simplemente reenvía mensajes JSON a los WebSocketSession correctos.
+ *
+ * Es parte esencial del sistema de videollamadas grupales P2P.
+ */
 @Component
 public class WebSocketHandler extends TextWebSocketHandler {
 
+    /** Convertidor JSON <-> Map */
     private final ObjectMapper mapper = new ObjectMapper();
 
+    /** Mapa de salas: roomId -> lista de sesiones */
     private final Map<String, List<WebSocketSession>> rooms = new ConcurrentHashMap<>();
+
+    /** Mapeo de sesión -> username */
     private final Map<WebSocketSession, String> usernames = new ConcurrentHashMap<>();
+
+    /** Mapeo de sesión -> rol (Scrum Master, Developer, etc.) */
     private final Map<WebSocketSession, String> roles = new ConcurrentHashMap<>();
+
+    /** Mapeo de sessionId -> sesión */
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
 
+    /**
+     * Se ejecuta cuando un cliente abre la conexión WebSocket.
+     * No asigna usuario todavía; eso se hace con "register-user".
+     *
+     * @param session sesión WebSocket recién iniciada.
+     */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         sessions.put(session.getId(), session);
         System.out.println("🟢 Nueva conexión WebSocket: " + session.getId());
     }
 
+    /**
+     * Procesa mensajes entrantes de WebSocket. Cada mensaje debe
+     * incluir un campo "type" que determina la acción a ejecutar.
+     *
+     * Tipos soportados:
+     *   - register-user
+     *   - create-room
+     *   - join
+     *   - invite
+     *   - offer / answer / ice
+     *   - end-call
+     *   - ping
+     *
+     * @param session sesión remitente.
+     * @param message mensaje recibido.
+     */
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
         Map<String, Object> payload = mapper.readValue(message.getPayload(), Map.class);
@@ -42,6 +95,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
     }
 
+    /**
+     * Registra un usuario luego de que abre el WebSocket.
+     *
+     * @param session sesión del usuario.
+     * @param payload JSON con: username
+     */
     private void handleRegisterUser(WebSocketSession session, Map<String, Object> payload) throws IOException {
         String username = (String) payload.get("username");
         usernames.put(session, username);
@@ -50,9 +109,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 "type", "register-success",
                 "message", "Usuario registrado correctamente como " + username
         ))));
+
         System.out.println("👤 Usuario registrado: " + username);
     }
 
+    /**
+     * Crea una nueva sala WebRTC.
+     *
+     * @param session sesión que crea la sala (host).
+     * @param payload JSON con: room, host, role
+     */
     private void handleCreateRoom(WebSocketSession session, Map<String, Object> payload) throws IOException {
         String room = (String) payload.get("room");
         String user = (String) payload.get("host");
@@ -70,6 +136,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
         System.out.println("🏗️ Sala creada: " + room + " por " + user);
     }
 
+    /**
+     * Un usuario intenta unirse a una sala existente.
+     *
+     * @param session sesión del usuario.
+     * @param payload JSON con: room, user, role
+     */
     private void handleJoinRoom(WebSocketSession session, Map<String, Object> payload) throws IOException {
         String room = (String) payload.get("room");
         String user = (String) payload.get("user");
@@ -97,6 +169,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
         System.out.println("👋 " + user + " se unió a la sala " + room);
     }
 
+    /**
+     * Envía una invitación a un usuario específico.
+     *
+     * @param session sesión del remitente.
+     * @param payload JSON con: to, from, room
+     */
     private void handleInvite(WebSocketSession session, Map<String, Object> payload) throws IOException {
         String to = (String) payload.get("to");
         String from = (String) payload.get("from");
@@ -128,10 +206,18 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
     }
 
+    /**
+     * Mantiene viva la conexión WebSocket (ping/pong).
+     */
     private void handlePing(WebSocketSession session) {
-        // No hace nada: solo evita desconexiones
+        // Intencionalmente vacío
     }
 
+    /**
+     * Finaliza una llamada y elimina la sala.
+     *
+     * @param payload JSON con: room
+     */
     private void handleEndCall(Map<String, Object> payload) throws IOException {
         String room = (String) payload.get("room");
         if (rooms.containsKey(room)) {
@@ -148,26 +234,36 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
     }
 
+    /**
+     * Reenvía señales WebRTC dentro de una sala.
+     *
+     * Si el mensaje contiene "to": envío directo.
+     * Si no: broadcast a todos menos el remitente.
+     *
+     * @param sender sesión que envía la señal.
+     * @param message JSON que contiene offer/answer/ice.
+     */
     private void broadcastToRoom(WebSocketSession sender, Map<String, Object> message) throws IOException {
         String room = null;
+
         for (Map.Entry<String, List<WebSocketSession>> entry : rooms.entrySet()) {
             if (entry.getValue().contains(sender)) {
                 room = entry.getKey();
                 break;
             }
         }
+
         if (room == null) return;
 
         String toUser = (String) message.get("to");
         String json = mapper.writeValueAsString(message);
 
-        // Si el mensaje tiene "to", enviarlo solo a esa persona
         if (toUser != null) {
             for (Map.Entry<WebSocketSession, String> entry : usernames.entrySet()) {
                 if (entry.getValue().equalsIgnoreCase(toUser)) {
-                    WebSocketSession targetSession = entry.getKey();
-                    if (targetSession.isOpen()) {
-                        targetSession.sendMessage(new TextMessage(json));
+                    WebSocketSession target = entry.getKey();
+                    if (target.isOpen()) {
+                        target.sendMessage(new TextMessage(json));
                         System.out.println("📤 Mensaje dirigido a " + toUser + ": " + message.get("type"));
                     }
                     return;
@@ -177,7 +273,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
             return;
         }
 
-        // Si no tiene "to", enviarlo a todos menos al emisor (mensajes generales)
         for (WebSocketSession s : rooms.get(room)) {
             if (s.isOpen() && s != sender) {
                 s.sendMessage(new TextMessage(json));
@@ -185,7 +280,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-
+    /**
+     * Maneja desconexiones. Si un usuario ya estaba en sala,
+     * se le da 1 minuto para reconectar antes de eliminarlo.
+     *
+     * @param session sesión cerrada.
+     * @param status motivo del cierre.
+     */
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         String user = usernames.getOrDefault(session, session.getId());
@@ -209,7 +310,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                         System.out.println("✅ " + user + " se reconectó a tiempo, sesión conservada.");
                     }
                 }
-            }, 60000); // 🕒 1 minuto
+            }, 60000); // 1 min
         } else {
             usernames.remove(session);
             roles.remove(session);
