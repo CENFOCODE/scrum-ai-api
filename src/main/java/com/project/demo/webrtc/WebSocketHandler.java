@@ -155,6 +155,22 @@ public class WebSocketHandler extends TextWebSocketHandler {
             return;
         }
 
+        // ✅ REGLA DE NEGOCIO: Un solo rol por sala, excepto Developer
+        if (!role.equalsIgnoreCase("Developer")) {
+            boolean roleUsed = rooms.get(room).stream().anyMatch(s ->
+                    role.equalsIgnoreCase(roles.get(s))
+            );
+
+            if (roleUsed) {
+                session.sendMessage(new TextMessage(mapper.writeValueAsString(Map.of(
+                        "type", "roleError",
+                        "message", "El rol '" + role + "' ya está siendo utilizado en esta sala. Solo puede repetirse Developer."
+                ))));
+                return;
+            }
+        }
+
+        // ✅ Si pasa la validación, agregar a la sala
         rooms.get(room).add(session);
         usernames.put(session, user);
         roles.put(session, role);
@@ -166,8 +182,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 "role", role
         ));
 
-        System.out.println("👋 " + user + " se unió a la sala " + room);
+        System.out.println("👋 " + user + " se unió a la sala " + room + " como " + role);
     }
+
 
     /**
      * Envía una invitación a un usuario específico.
