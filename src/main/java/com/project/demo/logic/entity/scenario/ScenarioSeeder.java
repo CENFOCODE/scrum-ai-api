@@ -26,18 +26,15 @@ public class ScenarioSeeder implements ApplicationListener<ContextRefreshedEvent
         List<Scenario> ceremonies = List.of(
                 new Scenario(null, "Planning",
                         "Reunión donde se define qué trabajo se realizará en el próximo sprint, se estiman tareas y se asignan responsabilidades.",
-                        60, "Backlog del proyecto actualizado", "Equipo Scrum", null, null,
+                        120, "Backlog del proyecto actualizado", "Equipo Scrum", null, null,
                         "Definir y planificar el trabajo del sprint", "Medium", "Planning"),
 
                 new Scenario(null, "Daily",
                         "Reunión diaria para sincronizar al equipo, identificar impedimentos y actualizar el progreso del trabajo.",
-                        60, "Tareas en curso", "Equipo Scrum", null, null,
+                        15, "Tareas en curso", "Equipo Scrum", null, null,
                         "Actualizar el progreso y resolver impedimentos", "Easy", "Daily"),
 
-                new Scenario(null, "Grooming",
-                        "Sesión para revisar y priorizar el backlog, detallando las historias de usuario y asegurando que estén listas para el próximo sprint.",
-                        60, "Backlog detallado y priorizado", "Equipo Scrum", null, null,
-                        "Mantener el backlog refinado y listo para planificación", "Medium", "Grooming"),
+            
 
                 new Scenario(null, "Review",
                         "Reunión de revisión del sprint para presentar los entregables completados al Product Owner y recibir retroalimentación.",
