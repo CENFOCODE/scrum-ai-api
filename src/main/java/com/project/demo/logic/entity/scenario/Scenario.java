@@ -13,6 +13,20 @@ public class Scenario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    public Scenario(Long id, String name, String description, int estimatedDuration, String backlog, String team, List<Simulation> simulations, List<ScenarioTemplate> templates, String goals, String difficultyLevel, String ceremonyType) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.estimatedDuration = estimatedDuration;
+        this.backlog = backlog;
+        this.team = team;
+        this.simulations = simulations;
+        this.templates = templates;
+        this.goals = goals;
+        this.difficultyLevel = difficultyLevel;
+        this.ceremonyType = ceremonyType;
+    }
+
     @Column(length = 100, nullable = false)
     private String name;
 
