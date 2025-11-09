@@ -22,7 +22,7 @@ public class ScrumRoleRestController {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("ceremony", "Daily Scrum");
         data.put("intro", "El Daily Scrum es una reunión diaria de corta duración en la que el equipo sincroniza esfuerzos, identifica bloqueos y planifica el trabajo del día para mantener el avance hacia el Sprint Goal.");
-        data.put("objective", "Compartir avances, identificar tareas próximas y detectar impedimentos para mantener la sincronización del equipo hacia el Sprint Goal.");
+        data.put("objective", "Asegurar la sincronización del equipo en torno al Sprint Goal mediante: la visibilidad diaria del progreso y de las dependencias entre tareas, la priorización de las actividades de las próximas 24, la identificación temprana de impedimentos y la actualización ligera del Sprint Backlog cuando sea necesario, manteniendo la coordinación entre miembros para equilibrar carga de trabajo, compartir contexto y reducir riesgos de integración.");
         data.put("scenario", "El equipo de desarrollo está a mitad del Sprint. Algunos miembros han completado historias del backlog, mientras otros enfrentan bloqueos técnicos con la integración del módulo de pagos. El Scrum Master facilita la reunión para que cada integrante responda:\n" +
                 "¿Qué hice ayer? ¿Qué haré hoy? ¿Qué impedimentos tengo?");
         data.put("participants", Arrays.asList("Max Verstappen Scrum Master", "Fernando Alonso Product Owner", "Charles Leclerc Developer", "Oscar Piastri Stakeholder"));
