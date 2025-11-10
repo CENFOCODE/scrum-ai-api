@@ -56,21 +56,30 @@ public class UserRestController {
                 user, HttpStatus.OK, request);
     }
 
-    @PutMapping("/{userId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<?> updateUser(@PathVariable Long userId, @RequestBody User user, HttpServletRequest request) {
-        Optional<User> foundOrder = userRepository.findById(userId);
-        if(foundOrder.isPresent()) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+    @PutMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> updateUser(@RequestBody User incoming, HttpServletRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User principal = (User) authentication.getPrincipal();
+        Long userId = principal.getId();
+
+        Optional<User> found = userRepository.findById(userId);
+        if (found.isPresent()) {
+            User user = found.get();
+            if (incoming.getName() != null) user.setName(incoming.getName());
+            if (incoming.getLastname() != null) user.setLastname(incoming.getLastname());
+            if (incoming.getEmail() != null) user.setEmail(incoming.getEmail());
+            if (incoming.getPassword() != null && !incoming.getPassword().isBlank()) {
+                user.setPassword(passwordEncoder.encode(incoming.getPassword()));
+            }
             userRepository.save(user);
-            return new GlobalResponseHandler().handleResponse("User updated successfully",
-                    user, HttpStatus.OK, request);
+
+            user.setPassword(null);
+            return new GlobalResponseHandler().handleResponse("User updated successfully", user, HttpStatus.OK, request);
         } else {
-            return new GlobalResponseHandler().handleResponse("User id " + userId + " not found"  ,
-                    HttpStatus.NOT_FOUND, request);
+            return new GlobalResponseHandler().handleResponse("User id " + userId + " not found", HttpStatus.NOT_FOUND, request);
         }
     }
-
 
     @DeleteMapping("/{userId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
@@ -88,9 +97,35 @@ public class UserRestController {
 
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
-    public User authenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (User) authentication.getPrincipal();
+
+    public ResponseEntity<?> authenticatedUser(HttpServletRequest request) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User loggedUser = (User) auth.getPrincipal();
+
+        Optional<User> foundUser = userRepository.findById(loggedUser.getId());
+
+        if(foundUser.isPresent()) {
+            User dbUser = foundUser.get();
+
+            dbUser.getAuthorities().size();
+
+            dbUser.setPassword(null);
+
+            return new GlobalResponseHandler().handleResponse(
+                    "User retrieved successfully",
+                    dbUser,
+                    HttpStatus.OK,
+                    request
+            );
+        }
+
+        return new GlobalResponseHandler().handleResponse(
+                "User not found",
+                HttpStatus.NOT_FOUND,
+                request
+        );
     }
+
 
 }
