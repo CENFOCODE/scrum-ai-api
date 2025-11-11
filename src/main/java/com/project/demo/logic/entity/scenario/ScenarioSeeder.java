@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class ScenarioListSeeder implements ApplicationListener<ContextRefreshedEvent> {
+public class ScenarioSeeder implements ApplicationListener<ContextRefreshedEvent> {
 
     private final ScenarioRepository scenarioRepository;
 
-    public ScenarioListSeeder(ScenarioRepository scenarioRepository) {
+    public ScenarioSeeder(ScenarioRepository scenarioRepository) {
         this.scenarioRepository = scenarioRepository;
     }
 
