@@ -27,7 +27,7 @@ public class Scenario {
         this.ceremonyType = ceremonyType;
     }
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 100, nullable = true)
     private String name;
 
     private String description;
@@ -35,7 +35,7 @@ public class Scenario {
     @Column(name = "ceremony_type", nullable = false, length = 50)
     private String ceremonyType;
 
-    @Column(name = "difficulty_level", nullable = false, length = 20)
+    @Column(name = "difficulty_level", nullable = true, length = 20)
     private String difficultyLevel;
 
     @Column(name = "estimated_duration")
