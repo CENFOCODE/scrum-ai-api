@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class ScenarioSeeder implements ApplicationListener<ContextRefreshedEvent> {
+public class ScenarioListSeeder implements ApplicationListener<ContextRefreshedEvent> {
 
     private final ScenarioRepository scenarioRepository;
 
-    public ScenarioSeeder(ScenarioRepository scenarioRepository) {
+    public ScenarioListSeeder(ScenarioRepository scenarioRepository) {
         this.scenarioRepository = scenarioRepository;
     }
 
@@ -44,6 +44,8 @@ public class ScenarioSeeder implements ApplicationListener<ContextRefreshedEvent
                         60, "Lista de mejoras y acciones de seguimiento", "Equipo Scrum", null, null,
                         "Mejorar procesos y colaboración del equipo", null, "Retrospective")
         );
+
+
 
         scenarioRepository.saveAll(ceremonies);
     }
