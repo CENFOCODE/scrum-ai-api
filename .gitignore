@@ -43,3 +43,4 @@ build/resources/
 .gradle/vcs-1/gc.properties
 .gradle/*
 build/*
+out/*

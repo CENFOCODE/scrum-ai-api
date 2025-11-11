@@ -12,49 +12,31 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * WebSocketHandler
  * -------------------------------------------------------------
- * Manejador central de WebSocket para la señalización de WebRTC
- * dentro de ScrumAI. Este componente NO transmite audio/video,
- * solamente envía y recibe mensajes de control entre usuarios:
+ * Manejador central de WebSocket para la señalización WebRTC en ScrumAI.
  *
- *  - Crear salas
- *  - Unirse a salas
- *  - Invitar usuarios
- *  - Enviar/recibir Offer, Answer, ICE candidates
- *  - Manejar desconexiones y reconexiones
+ * Funciones principales:
+ *  • Crear y gestionar salas WebRTC.
+ *  • Validar roles Scrum únicos por sala.
+ *  • Enrutar mensajes de señalización (offer/answer/ice).
+ *  • Enviar snapshots de la sala al nuevo usuario para conexión P2P completa.
+ *  • Manejar invitaciones, desconexiones y finalización de sala.
  *
- * Funciona como un "router" de mensajes basado en:
- *  - Sala (room)
- *  - Usuario objetivo (to)
- *  - Usuario emisor (from)
- *
- * Es completamente stateless respecto a medios multimedia,
- * simplemente reenvía mensajes JSON a los WebSocketSession correctos.
- *
- * Es parte esencial del sistema de videollamadas grupales P2P.
+ * Este handler no transmite medios, únicamente reenvía mensajes JSON.
  */
 @Component
 public class WebSocketHandler extends TextWebSocketHandler {
 
-    /** Convertidor JSON <-> Map */
     private final ObjectMapper mapper = new ObjectMapper();
 
-    /** Mapa de salas: roomId -> lista de sesiones */
     private final Map<String, List<WebSocketSession>> rooms = new ConcurrentHashMap<>();
-
-    /** Mapeo de sesión -> username */
     private final Map<WebSocketSession, String> usernames = new ConcurrentHashMap<>();
-
-    /** Mapeo de sesión -> rol (Scrum Master, Developer, etc.) */
     private final Map<WebSocketSession, String> roles = new ConcurrentHashMap<>();
-
-    /** Mapeo de sessionId -> sesión */
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
 
     /**
-     * Se ejecuta cuando un cliente abre la conexión WebSocket.
-     * No asigna usuario todavía; eso se hace con "register-user".
+     * Se ejecuta cuando un cliente abre una nueva conexión WebSocket.
      *
-     * @param session sesión WebSocket recién iniciada.
+     * @param session sesión creada.
      */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
@@ -63,20 +45,19 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
 
     /**
-     * Procesa mensajes entrantes de WebSocket. Cada mensaje debe
-     * incluir un campo "type" que determina la acción a ejecutar.
+     * Procesa los mensajes entrantes según su tipo.
      *
      * Tipos soportados:
-     *   - register-user
-     *   - create-room
-     *   - join
-     *   - invite
-     *   - offer / answer / ice
-     *   - end-call
-     *   - ping
+     *  - register-user
+     *  - create-room
+     *  - join
+     *  - invite
+     *  - offer / answer / ice
+     *  - end-call
+     *  - ping
      *
      * @param session sesión remitente.
-     * @param message mensaje recibido.
+     * @param message mensaje recibido en formato JSON.
      */
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
@@ -88,18 +69,18 @@ public class WebSocketHandler extends TextWebSocketHandler {
             case "create-room" -> handleCreateRoom(session, payload);
             case "join" -> handleJoinRoom(session, payload);
             case "invite" -> handleInvite(session, payload);
-            case "offer", "answer", "ice" -> broadcastToRoom(session, payload);
+            case "offer", "answer", "ice" -> broadcastSignal(session, payload);
             case "end-call" -> handleEndCall(payload);
-            case "ping" -> handlePing(session);
-            default -> System.out.println("⚠️ Tipo de mensaje no reconocido: " + type);
+            case "ping" -> {}
+            default -> System.out.println("⚠️ Tipo desconocido: " + type);
         }
     }
 
     /**
-     * Registra un usuario luego de que abre el WebSocket.
+     * Registra un usuario asociado a una sesión WebSocket.
      *
      * @param session sesión del usuario.
-     * @param payload JSON con: username
+     * @param payload payload con el nombre de usuario.
      */
     private void handleRegisterUser(WebSocketSession session, Map<String, Object> payload) throws IOException {
         String username = (String) payload.get("username");
@@ -107,109 +88,135 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         session.sendMessage(new TextMessage(mapper.writeValueAsString(Map.of(
                 "type", "register-success",
-                "message", "Usuario registrado correctamente como " + username
+                "message", "Registrado como " + username
         ))));
 
         System.out.println("👤 Usuario registrado: " + username);
     }
 
     /**
-     * Crea una nueva sala WebRTC.
+     * Crea una sala nueva y agrega al usuario como host.
      *
-     * @param session sesión que crea la sala (host).
-     * @param payload JSON con: room, host, role
+     * @param session sesión del host.
+     * @param payload información de la sala y rol.
      */
     private void handleCreateRoom(WebSocketSession session, Map<String, Object> payload) throws IOException {
         String room = (String) payload.get("room");
-        String user = (String) payload.get("host");
+        String username = (String) payload.get("host");
         String role = (String) payload.getOrDefault("role", "Host");
 
         rooms.put(room, new ArrayList<>(List.of(session)));
-        usernames.put(session, user);
+        usernames.put(session, username);
         roles.put(session, role);
 
         session.sendMessage(new TextMessage(mapper.writeValueAsString(Map.of(
                 "type", "joinSuccess",
-                "message", "Sala creada con éxito: " + room
+                "message", "Sala creada",
+                "user", username
         ))));
 
-        System.out.println("🏗️ Sala creada: " + room + " por " + user);
+        sendRoomSnapshot(room, session);
+
+        System.out.println("🏗️ Sala creada: " + room + " por " + username);
     }
 
     /**
-     * Un usuario intenta unirse a una sala existente.
+     * Permite que un usuario se una a una sala existente.
+     * Valida roles únicos y envía snapshot al nuevo usuario.
      *
-     * @param session sesión del usuario.
-     * @param payload JSON con: room, user, role
+     * @param session sesión que se une.
+     * @param payload contenedor con room, user, role.
      */
     private void handleJoinRoom(WebSocketSession session, Map<String, Object> payload) throws IOException {
         String room = (String) payload.get("room");
-        String user = (String) payload.get("user");
+        String username = (String) payload.get("user");
         String role = (String) payload.getOrDefault("role", "Invitado");
 
         if (!rooms.containsKey(room)) {
             session.sendMessage(new TextMessage(mapper.writeValueAsString(Map.of(
                     "type", "joinError",
-                    "message", "La sala " + room + " no existe."
+                    "message", "La sala no existe"
             ))));
             return;
         }
 
-        // ✅ REGLA DE NEGOCIO: Un solo rol por sala, excepto Developer
         if (!role.equalsIgnoreCase("Developer")) {
             boolean roleUsed = rooms.get(room).stream().anyMatch(s ->
                     role.equalsIgnoreCase(roles.get(s))
             );
-
             if (roleUsed) {
                 session.sendMessage(new TextMessage(mapper.writeValueAsString(Map.of(
                         "type", "roleError",
-                        "message", "El rol '" + role + "' ya está siendo utilizado en esta sala. Solo puede repetirse Developer."
+                        "message", "El rol ya está en uso"
                 ))));
                 return;
             }
         }
 
-        // ✅ Si pasa la validación, agregar a la sala
         rooms.get(room).add(session);
-        usernames.put(session, user);
+        usernames.put(session, username);
         roles.put(session, role);
 
-        broadcastToRoom(session, Map.of(
+        broadcastToAll(room, Map.of(
                 "type", "joinSuccess",
-                "message", user + " se ha unido a la sala " + room,
-                "user", user,
+                "user", username,
                 "role", role
         ));
 
-        System.out.println("👋 " + user + " se unió a la sala " + room + " como " + role);
+        sendRoomSnapshot(room, session);
+
+        System.out.println("👋 " + username + " se unió a " + room + " como " + role);
     }
 
+    /**
+     * Envía un snapshot completo de los usuarios en la sala al nuevo usuario.
+     *
+     * @param room sala a la que se unió.
+     * @param newUser sesión del usuario nuevo.
+     */
+    private void sendRoomSnapshot(String room, WebSocketSession newUser) throws IOException {
+        List<WebSocketSession> participants = rooms.get(room);
+        if (participants == null) return;
+
+        List<Map<String, String>> list = new ArrayList<>();
+
+        for (WebSocketSession s : participants) {
+            list.add(Map.of(
+                    "username", usernames.get(s),
+                    "role", roles.get(s)
+            ));
+        }
+
+        newUser.sendMessage(new TextMessage(mapper.writeValueAsString(Map.of(
+                "type", "ROOM_SNAPSHOT",
+                "room", room,
+                "users", list
+        ))));
+    }
 
     /**
-     * Envía una invitación a un usuario específico.
+     * Envía una invitación a un usuario por nombre.
      *
-     * @param session sesión del remitente.
-     * @param payload JSON con: to, from, room
+     * @param session sesión remitente.
+     * @param payload datos de invitación.
      */
     private void handleInvite(WebSocketSession session, Map<String, Object> payload) throws IOException {
         String to = (String) payload.get("to");
         String from = (String) payload.get("from");
         String room = (String) payload.get("room");
 
-        Map<String, Object> inviteMsg = Map.of(
+        Map<String, Object> invite = Map.of(
                 "type", "invite",
-                "message", from + " te ha invitado a la sala " + room,
-                "to", to,
-                "room", room
+                "message", from + " te invita a " + room,
+                "room", room,
+                "to", to
         );
 
         boolean sent = false;
 
         for (Map.Entry<WebSocketSession, String> entry : usernames.entrySet()) {
             if (entry.getValue().equalsIgnoreCase(to)) {
-                entry.getKey().sendMessage(new TextMessage(mapper.writeValueAsString(inviteMsg)));
-                System.out.println("💌 Invitación enviada a " + to + " por " + from);
+                entry.getKey().sendMessage(new TextMessage(mapper.writeValueAsString(invite)));
                 sent = true;
                 break;
             }
@@ -218,122 +225,121 @@ public class WebSocketHandler extends TextWebSocketHandler {
         if (!sent) {
             session.sendMessage(new TextMessage(mapper.writeValueAsString(Map.of(
                     "type", "error",
-                    "message", "Usuario " + to + " no encontrado o no conectado."
+                    "message", "Usuario no encontrado"
             ))));
-        }
-    }
-
-    /**
-     * Mantiene viva la conexión WebSocket (ping/pong).
-     */
-    private void handlePing(WebSocketSession session) {
-        // Intencionalmente vacío
-    }
-
-    /**
-     * Finaliza una llamada y elimina la sala.
-     *
-     * @param payload JSON con: room
-     */
-    private void handleEndCall(Map<String, Object> payload) throws IOException {
-        String room = (String) payload.get("room");
-        if (rooms.containsKey(room)) {
-            for (WebSocketSession s : rooms.get(room)) {
-                if (s.isOpen()) {
-                    s.sendMessage(new TextMessage(mapper.writeValueAsString(Map.of(
-                            "type", "endCall",
-                            "message", "La llamada fue finalizada por el organizador."
-                    ))));
-                }
-            }
-            rooms.remove(room);
-            System.out.println("🔴 Llamada finalizada y sala eliminada: " + room);
         }
     }
 
     /**
      * Reenvía señales WebRTC dentro de una sala.
      *
-     * Si el mensaje contiene "to": envío directo.
-     * Si no: broadcast a todos menos el remitente.
+     * Si contiene "to", es envío directo.
+     * Si no contiene "to", es broadcast al resto.
      *
-     * @param sender sesión que envía la señal.
-     * @param message JSON que contiene offer/answer/ice.
+     * @param sender sesión que originó la señal.
+     * @param message mapa con offer/answer/ice.
      */
-    private void broadcastToRoom(WebSocketSession sender, Map<String, Object> message) throws IOException {
-        String room = null;
-
-        for (Map.Entry<String, List<WebSocketSession>> entry : rooms.entrySet()) {
-            if (entry.getValue().contains(sender)) {
-                room = entry.getKey();
-                break;
-            }
-        }
-
+    private void broadcastSignal(WebSocketSession sender, Map<String, Object> message) throws IOException {
+        String room = getRoomOfSession(sender);
         if (room == null) return;
 
-        String toUser = (String) message.get("to");
+        String to = (String) message.get("to");
         String json = mapper.writeValueAsString(message);
 
-        if (toUser != null) {
+        if (to != null) {
             for (Map.Entry<WebSocketSession, String> entry : usernames.entrySet()) {
-                if (entry.getValue().equalsIgnoreCase(toUser)) {
-                    WebSocketSession target = entry.getKey();
-                    if (target.isOpen()) {
-                        target.sendMessage(new TextMessage(json));
-                        System.out.println("📤 Mensaje dirigido a " + toUser + ": " + message.get("type"));
-                    }
+                if (entry.getValue().equalsIgnoreCase(to)) {
+                    entry.getKey().sendMessage(new TextMessage(json));
                     return;
                 }
             }
-            System.out.println("⚠️ Usuario destino no encontrado: " + toUser);
             return;
         }
 
-        for (WebSocketSession s : rooms.get(room)) {
-            if (s.isOpen() && s != sender) {
-                s.sendMessage(new TextMessage(json));
+        for (WebSocketSession ws : rooms.get(room)) {
+            if (ws != sender && ws.isOpen()) {
+                ws.sendMessage(new TextMessage(json));
             }
         }
     }
 
     /**
-     * Maneja desconexiones. Si un usuario ya estaba en sala,
-     * se le da 1 minuto para reconectar antes de eliminarlo.
+     * Finaliza una llamada y elimina la sala.
+     *
+     * @param payload contiene el room a cerrar.
+     */
+    private void handleEndCall(Map<String, Object> payload) throws IOException {
+        String room = (String) payload.get("room");
+
+        if (rooms.containsKey(room)) {
+            for (WebSocketSession s : rooms.get(room)) {
+                if (s.isOpen()) {
+                    s.sendMessage(new TextMessage(mapper.writeValueAsString(Map.of(
+                            "type", "endCall",
+                            "message", "Llamada finalizada"
+                    ))));
+                }
+            }
+
+            rooms.remove(room);
+            System.out.println("🔴 Sala eliminada: " + room);
+        }
+    }
+
+    /**
+     * Elimina una sesión de la sala y realiza limpieza
+     * cuando un WebSocket se desconecta.
      *
      * @param session sesión cerrada.
      * @param status motivo del cierre.
      */
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+        String room = getRoomOfSession(session);
         String user = usernames.getOrDefault(session, session.getId());
-        boolean isInRoom = rooms.values().stream().anyMatch(list -> list.contains(session));
 
-        if (isInRoom) {
-            System.out.println("⚠️ " + user + " parece desconectarse temporalmente. Esperando antes de cerrar...");
+        usernames.remove(session);
+        roles.remove(session);
 
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    boolean stillInRoom = rooms.values().stream().anyMatch(list -> list.contains(session));
-                    if (!session.isOpen() && stillInRoom) {
-                        usernames.remove(session);
-                        roles.remove(session);
-                        rooms.values().forEach(list -> list.remove(session));
-                        sessions.remove(session.getId());
-                        System.out.println("❌ Sesión cerrada (expirada): " + user);
-                    } else {
-                        System.out.println("✅ " + user + " se reconectó a tiempo, sesión conservada.");
-                    }
-                }
-            }, 60000); // 1 min
-        } else {
-            usernames.remove(session);
-            roles.remove(session);
-            rooms.values().forEach(list -> list.remove(session));
-            sessions.remove(session.getId());
-            System.out.println("❌ Sesión cerrada (sin sala): " + user);
+        if (room != null) {
+            rooms.get(room).remove(session);
+
+            if (rooms.get(room).isEmpty()) {
+                rooms.remove(room);
+                System.out.println("🗑️ Sala vacía eliminada: " + room);
+            }
+        }
+
+        System.out.println("❌ Sesión cerrada: " + user);
+    }
+
+    /**
+     * Obtiene la sala a la que pertenece una sesión.
+     *
+     * @param sender sesión WebSocket.
+     * @return roomId o null.
+     */
+    private String getRoomOfSession(WebSocketSession sender) {
+        for (Map.Entry<String, List<WebSocketSession>> entry : rooms.entrySet()) {
+            if (entry.getValue().contains(sender)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Envía un mensaje a todos los usuarios de una sala.
+     *
+     * @param room sala destino.
+     * @param msg mapa JSON.
+     */
+    private void broadcastToAll(String room, Map<String, Object> msg) throws IOException {
+        String json = mapper.writeValueAsString(msg);
+        for (WebSocketSession s : rooms.get(room)) {
+            if (s.isOpen()) {
+                s.sendMessage(new TextMessage(json));
+            }
         }
     }
 }

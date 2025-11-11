@@ -50,7 +50,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                // ✅ Separa automáticamente la propiedad CSV en un arreglo de Strings
+                // Separa automáticamente la propiedad CSV en un arreglo de Strings
                 .allowedOrigins(allowedOrigins.split(","))
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
