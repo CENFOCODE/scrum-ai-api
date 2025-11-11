@@ -58,7 +58,7 @@ public class UserRestController {
 
     @PutMapping("/me")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> updateUser(@RequestBody User incoming, HttpServletRequest request) {
+    public ResponseEntity<?> updateUser(@RequestBody User incomingUser, HttpServletRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User principal = (User) authentication.getPrincipal();
         Long userId = principal.getId();
@@ -66,11 +66,11 @@ public class UserRestController {
         Optional<User> found = userRepository.findById(userId);
         if (found.isPresent()) {
             User user = found.get();
-            if (incoming.getName() != null) user.setName(incoming.getName());
-            if (incoming.getLastname() != null) user.setLastname(incoming.getLastname());
-            if (incoming.getEmail() != null) user.setEmail(incoming.getEmail());
-            if (incoming.getPassword() != null && !incoming.getPassword().isBlank()) {
-                user.setPassword(passwordEncoder.encode(incoming.getPassword()));
+            if (incomingUser.getName() != null) user.setName(incomingUser.getName());
+            if (incomingUser.getLastname() != null) user.setLastname(incomingUser.getLastname());
+            if (incomingUser.getEmail() != null) user.setEmail(incomingUser.getEmail());
+            if (incomingUser.getPassword() != null && !incomingUser.getPassword().isBlank()) {
+                user.setPassword(passwordEncoder.encode(incomingUser.getPassword()));
             }
             userRepository.save(user);
 
