@@ -32,7 +32,7 @@ public class ScenarioSeeder implements ApplicationListener<ContextRefreshedEvent
                 new Scenario(null, "Daily",
                         "Reunión diaria para sincronizar al equipo, identificar impedimentos y actualizar el progreso del trabajo.",
                         15, "Tareas en curso", "Equipo Scrum",null,
-                        "Actualizar el progreso y resolver impedimentos", "Daily"),
+                        "Actualizar el progreso y resolver impedimentos del equipo", "Daily"),
 
                 new Scenario(null, "Review",
                         "Reunión de revisión del sprint para presentar los entregables completados al Product Owner y recibir retroalimentación.",
