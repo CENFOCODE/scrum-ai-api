@@ -1,6 +1,6 @@
 package com.project.demo.rest.auth;
 
-import com.project.demo.logic.entity.auth.EmailService;
+import com.project.demo.logic.utils.email.EmailService;
 import com.project.demo.logic.entity.auth.PasswordResetService;
 import com.project.demo.logic.entity.auth.RecoverPasswordRequest;
 import com.project.demo.logic.entity.http.GlobalResponseHandler;

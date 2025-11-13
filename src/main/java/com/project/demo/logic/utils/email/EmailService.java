@@ -1,4 +1,4 @@
-package com.project.demo.logic.entity.auth;
+package com.project.demo.logic.utils.email;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,4 +21,20 @@ public class EmailService {
         mailMessage.setText("Esta es tu contraseña temporal: " + tempPassword);
         mailSender.send(mailMessage);
     }
+    /**
+     * Envía un correo electrónico genérico con asunto y cuerpo personalizados.
+     *
+     * @param toEmail dirección del destinatario
+     * @param subject asunto del mensaje
+     * @param body cuerpo del mensaje
+     */
+    public void sendCustomEmail(String toEmail, String subject, String body) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setFrom(ADMIN_GMAIL);
+        mailMessage.setTo(toEmail);
+        mailMessage.setSubject(subject);
+        mailMessage.setText(body);
+        mailSender.send(mailMessage);
+    }
+
 }

@@ -13,7 +13,9 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("http://localhost:4200/");
+        config.addAllowedOrigin("http://localhost:4200");
+        config.addAllowedOrigin("https://accurately-fruits-knights-fifty.trycloudflare.com");
+        config.addAllowedOrigin("https://frore-paz-comprehensibly.ngrok-free.dev");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
