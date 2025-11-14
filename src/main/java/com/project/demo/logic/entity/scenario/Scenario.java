@@ -1,7 +1,6 @@
 package com.project.demo.logic.entity.scenario;
 
 import com.project.demo.logic.entity.scenarioTemplate.ScenarioTemplate;
-import com.project.demo.logic.entity.simulation.Simulation;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -13,17 +12,15 @@ public class Scenario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public Scenario(Long id, String name, String description, int estimatedDuration, String backlog, String team, List<Simulation> simulations, List<ScenarioTemplate> templates, String goals, String difficultyLevel, String ceremonyType) {
+    public Scenario(Long id, String name, String description, int estimatedDuration, String backlog, String team, List<ScenarioTemplate> templates, String goals, String ceremonyType) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.estimatedDuration = estimatedDuration;
         this.backlog = backlog;
         this.team = team;
-        this.simulations = simulations;
         this.templates = templates;
         this.goals = goals;
-        this.difficultyLevel = difficultyLevel;
         this.ceremonyType = ceremonyType;
     }
 
@@ -34,9 +31,6 @@ public class Scenario {
 
     @Column(name = "ceremony_type", nullable = false, length = 50)
     private String ceremonyType;
-
-    @Column(name = "difficulty_level", nullable = false, length = 20)
-    private String difficultyLevel;
 
     @Column(name = "estimated_duration")
     private int estimatedDuration;
@@ -49,9 +43,6 @@ public class Scenario {
 
     @Column(length = 1000)
     private String team;
-
-    @OneToMany(mappedBy = "scenario")
-    private List<Simulation> simulations;
 
     @OneToMany(mappedBy = "scenario")
     private List<ScenarioTemplate> templates;
@@ -90,13 +81,6 @@ public class Scenario {
         this.ceremonyType = ceremonyType;
     }
 
-    public String getDifficultyLevel() {
-        return difficultyLevel;
-    }
-
-    public void setDifficultyLevel(String difficultyLevel) {
-        this.difficultyLevel = difficultyLevel;
-    }
 
     public int getEstimatedDuration() {
         return estimatedDuration;
@@ -130,13 +114,6 @@ public class Scenario {
         this.team = team;
     }
 
-    public List<Simulation> getSimulations() {
-        return simulations;
-    }
-
-    public void setSimulations(List<Simulation> simulations) {
-        this.simulations = simulations;
-    }
 
     public List<ScenarioTemplate> getTemplates() {
         return templates;

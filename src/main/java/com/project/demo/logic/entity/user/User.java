@@ -69,8 +69,6 @@ public class User implements UserDetails {
         return List.of(authority);
     }
 
-    @OneToMany(mappedBy = "user")
-    private List<SimulationUser> simulationUsers;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Role role;
@@ -78,8 +76,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Notification> notifications;
 
-    @OneToMany(mappedBy = "createdBy")
-    private List<Simulation> simulations;
 
     @OneToMany(mappedBy = "user")
     private List<Feedback> feedbackList;
@@ -216,13 +212,6 @@ public class User implements UserDetails {
         this.resetToken = resetToken;
     }
 
-    public List<SimulationUser> getSimulationUser() {
-        return simulationUsers;
-    }
-
-    public void setSimulationUser(List<SimulationUser> simulationUser) {
-        this.simulationUsers = simulationUser;
-    }
 
     public List<Notification> getNotifications() {
         return notifications;
@@ -240,13 +229,6 @@ public class User implements UserDetails {
         this.improvementPlans = improvementPlan;
     }
 
-    public List<Simulation> getSimulations() {
-        return simulations;
-    }
-
-    public void setSimulations(List<Simulation> simulations) {
-        this.simulations = simulations;
-    }
 
     public List<Feedback> getFeedbackList() {
         return feedbackList;
