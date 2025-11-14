@@ -1,5 +1,6 @@
 package com.project.demo.rest.user;
 
+import com.project.demo.logic.entity.auth.JwtService;
 import com.project.demo.logic.entity.http.GlobalResponseHandler;
 import com.project.demo.logic.entity.http.Meta;
 import com.project.demo.logic.entity.user.User;
@@ -17,6 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -27,6 +30,9 @@ public class UserRestController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtService jwtService;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
@@ -66,15 +72,38 @@ public class UserRestController {
         Optional<User> found = userRepository.findById(userId);
         if (found.isPresent()) {
             User user = found.get();
+            boolean emailChanged = false;
+
+
+            String oldEmail = user.getEmail();
             if (incomingUser.getName() != null) user.setName(incomingUser.getName());
             if (incomingUser.getLastname() != null) user.setLastname(incomingUser.getLastname());
-            if (incomingUser.getEmail() != null) user.setEmail(incomingUser.getEmail());
+            if (incomingUser.getEmail() != null && !incomingUser.getEmail().equals(oldEmail)) {
+                user.setEmail(incomingUser.getEmail());
+                emailChanged = true;
+            }
             if (incomingUser.getPassword() != null && !incomingUser.getPassword().isBlank()) {
                 user.setPassword(passwordEncoder.encode(incomingUser.getPassword()));
             }
             userRepository.save(user);
 
             user.setPassword(null);
+            if (emailChanged) {
+                String newToken = jwtService.generateToken(user);
+
+                Map<String, Object> response = new HashMap<>();
+                response.put("user", user);
+                response.put("token", newToken);
+                response.put("emailChanged", true);
+
+                return new GlobalResponseHandler().handleResponse(
+                        "User updated successfully. New token generated.",
+                        response,
+                        HttpStatus.OK,
+                        request
+                );
+            }
+
             return new GlobalResponseHandler().handleResponse("User updated successfully", user, HttpStatus.OK, request);
         } else {
             return new GlobalResponseHandler().handleResponse("User id " + userId + " not found", HttpStatus.NOT_FOUND, request);
