@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
 
         if (exception instanceof BadCredentialsException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());
-            errorDetail.setProperty("description", "Datos invalidos");
+            errorDetail.setProperty("description", "Datos inválidos");
 
             return errorDetail;
         }
