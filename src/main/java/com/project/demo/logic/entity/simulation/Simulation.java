@@ -1,5 +1,6 @@
 package com.project.demo.logic.entity.simulation;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.demo.logic.entity.ceremonySession.CeremonySession;
 import com.project.demo.logic.entity.feedback.Feedback;
 import com.project.demo.logic.entity.history.History;
@@ -45,9 +46,6 @@ public class Simulation {
     private Double averageScore;
 
     @OneToMany(mappedBy = "simulation")
-    private List<SimulationUser> simulationUserList;
-
-    @OneToMany(mappedBy = "simulation")
     private List<Feedback> feedbackList;
 
     @OneToMany(mappedBy = "simulation")
@@ -62,14 +60,25 @@ public class Simulation {
     @OneToMany(mappedBy = "simulation")
     private List<CeremonySession> sessions;
 
+    public Simulation(Long id, Scenario scenario, User createdBy, String difficultyLevel, Date startDate, Date endDate, String status, Double averageScore) {
+        this.id = id;
+        this.scenario = scenario;
+        this.createdBy = createdBy;
+        this.difficultyLevel = difficultyLevel;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.status = status;
+        this.averageScore = averageScore;
+    }
+
     public Simulation() {
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -129,13 +138,6 @@ public class Simulation {
         this.averageScore = averageScore;
     }
 
-    public List<SimulationUser> getSimulationUserList() {
-        return simulationUserList;
-    }
-
-    public void setSimulationUserList(List<SimulationUser> simulationUserList) {
-        this.simulationUserList = simulationUserList;
-    }
 
     public List<Feedback> getFeedbackList() {
         return feedbackList;
