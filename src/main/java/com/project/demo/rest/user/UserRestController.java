@@ -78,12 +78,20 @@ public class UserRestController {
             String oldEmail = user.getEmail();
             if (incomingUser.getName() != null) user.setName(incomingUser.getName());
             if (incomingUser.getLastname() != null) user.setLastname(incomingUser.getLastname());
-            if (incomingUser.getEmail() != null && !incomingUser.getEmail().equals(oldEmail)) {
-                user.setEmail(incomingUser.getEmail());
-                emailChanged = true;
-            }
             if (incomingUser.getPassword() != null && !incomingUser.getPassword().isBlank()) {
                 user.setPassword(passwordEncoder.encode(incomingUser.getPassword()));
+            }
+            if (incomingUser.getEmail() != null && !incomingUser.getEmail().equals(oldEmail)) {
+                Optional<User> existingUser = userRepository.findByEmail(incomingUser.getEmail());
+                if (existingUser.isPresent() && !existingUser.get().getId().equals(userId)) {
+                    return new GlobalResponseHandler().handleResponse(
+                            "Este correo electrónico ya está registrado",
+                            HttpStatus.CONFLICT,
+                            request
+                    );
+                }
+                user.setEmail(incomingUser.getEmail());
+                emailChanged = true;
             }
             userRepository.save(user);
 
