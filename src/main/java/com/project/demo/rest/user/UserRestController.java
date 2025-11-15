@@ -1,5 +1,6 @@
 package com.project.demo.rest.user;
 
+import com.project.demo.logic.entity.auth.JwtService;
 import com.project.demo.logic.entity.http.GlobalResponseHandler;
 import com.project.demo.logic.entity.http.Meta;
 import com.project.demo.logic.entity.user.User;
@@ -17,6 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -27,6 +30,9 @@ public class UserRestController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtService jwtService;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
@@ -56,21 +62,61 @@ public class UserRestController {
                 user, HttpStatus.OK, request);
     }
 
-    @PutMapping("/{userId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<?> updateUser(@PathVariable Long userId, @RequestBody User user, HttpServletRequest request) {
-        Optional<User> foundOrder = userRepository.findById(userId);
-        if(foundOrder.isPresent()) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+    @PutMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> updateUser(@RequestBody User incomingUser, HttpServletRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User principal = (User) authentication.getPrincipal();
+        Long userId = principal.getId();
+
+        Optional<User> found = userRepository.findById(userId);
+        if (found.isPresent()) {
+            User user = found.get();
+            boolean emailChanged = false;
+
+
+            String oldEmail = user.getEmail();
+            if (incomingUser.getName() != null) user.setName(incomingUser.getName());
+            if (incomingUser.getLastname() != null) user.setLastname(incomingUser.getLastname());
+            if (incomingUser.getPassword() != null && !incomingUser.getPassword().isBlank()) {
+                user.setPassword(passwordEncoder.encode(incomingUser.getPassword()));
+            }
+            if (incomingUser.getEmail() != null && !incomingUser.getEmail().equals(oldEmail)) {
+                Optional<User> existingUser = userRepository.findByEmail(incomingUser.getEmail());
+                if (existingUser.isPresent() && !existingUser.get().getId().equals(userId)) {
+                    return new GlobalResponseHandler().handleResponse(
+                            "Este correo electrónico ya está registrado",
+                            HttpStatus.CONFLICT,
+                            request
+                    );
+                }
+                user.setEmail(incomingUser.getEmail());
+                emailChanged = true;
+            }
             userRepository.save(user);
-            return new GlobalResponseHandler().handleResponse("User updated successfully",
-                    user, HttpStatus.OK, request);
+
+            user.setPassword(null);
+            if (emailChanged) {
+                String newToken = jwtService.generateToken(user);
+
+                Map<String, Object> response = new HashMap<>();
+                response.put("user", user);
+                response.put("token", newToken);
+                response.put("emailChanged", true);
+
+                return new GlobalResponseHandler().handleResponse(
+                        "User updated successfully. New token generated.",
+                        response,
+                        HttpStatus.OK,
+                        request
+                );
+            }
+
+            return new GlobalResponseHandler().handleResponse("User updated successfully", user, HttpStatus.OK, request);
         } else {
-            return new GlobalResponseHandler().handleResponse("User id " + userId + " not found"  ,
-                    HttpStatus.NOT_FOUND, request);
+            return new GlobalResponseHandler().handleResponse("User id " + userId + " not found", HttpStatus.NOT_FOUND, request);
         }
     }
-
 
     @DeleteMapping("/{userId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
@@ -88,9 +134,35 @@ public class UserRestController {
 
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
-    public User authenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (User) authentication.getPrincipal();
+
+    public ResponseEntity<?> authenticatedUser(HttpServletRequest request) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User loggedUser = (User) auth.getPrincipal();
+
+        Optional<User> foundUser = userRepository.findById(loggedUser.getId());
+
+        if(foundUser.isPresent()) {
+            User dbUser = foundUser.get();
+
+            dbUser.getAuthorities().size();
+
+            dbUser.setPassword(null);
+
+            return new GlobalResponseHandler().handleResponse(
+                    "User retrieved successfully",
+                    dbUser,
+                    HttpStatus.OK,
+                    request
+            );
+        }
+
+        return new GlobalResponseHandler().handleResponse(
+                "User not found",
+                HttpStatus.NOT_FOUND,
+                request
+        );
     }
+
 
 }
