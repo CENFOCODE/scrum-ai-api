@@ -1,6 +1,7 @@
 package com.project.demo.logic.service.rtc.service;
 
 import com.project.demo.logic.dtos.AIResponseDTO;
+import com.project.demo.logic.dtos.daily.DailySummaryRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -92,5 +93,9 @@ public class GroqService {
         // Respuesta por defecto si algo salió mal
         airesponse.setMessage("No se pudo obtener respuesta de la IA.");
         return airesponse;
+    }
+
+    public String askDailySummary(DailySummaryRequest request) {
+        return null;
     }
 }

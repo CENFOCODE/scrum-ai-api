@@ -13,7 +13,7 @@ public class Scenario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public Scenario(Long id, String name, String description, int estimatedDuration, String backlog, String team, List<Simulation> simulations, List<ScenarioTemplate> templates, String goals, String difficultyLevel, String ceremonyType) {
+    public Scenario(Long id, String name, String description, int estimatedDuration, String backlog, String team, List<Simulation> simulations, List<ScenarioTemplate> templates, String goals, String ceremonyType) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -23,7 +23,7 @@ public class Scenario {
         this.simulations = simulations;
         this.templates = templates;
         this.goals = goals;
-        this.difficultyLevel = difficultyLevel;
+
         this.ceremonyType = ceremonyType;
     }
 
@@ -34,9 +34,6 @@ public class Scenario {
 
     @Column(name = "ceremony_type", nullable = false, length = 50)
     private String ceremonyType;
-
-    @Column(name = "difficulty_level", nullable = false, length = 20)
-    private String difficultyLevel;
 
     @Column(name = "estimated_duration")
     private int estimatedDuration;
@@ -88,14 +85,6 @@ public class Scenario {
 
     public void setCeremonyType(String ceremonyType) {
         this.ceremonyType = ceremonyType;
-    }
-
-    public String getDifficultyLevel() {
-        return difficultyLevel;
-    }
-
-    public void setDifficultyLevel(String difficultyLevel) {
-        this.difficultyLevel = difficultyLevel;
     }
 
     public int getEstimatedDuration() {
