@@ -13,18 +13,23 @@ public class SimulationUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
     @ManyToOne
-    @JoinColumn(name = "simulation_id", nullable = false)
+    @JoinColumn(name = "simulation_id",nullable = false)
     private Simulation simulation;
 
+
+    @Column(name = "scrum_role", nullable = false)
     private String scrumRole;
 
     @Column(nullable = false, name = "assigned_at", updatable = false)
     private Date assignedAt;
+
+    public SimulationUser(Long id, Date assignedAt, String scrumRole, Simulation simulation) {
+        this.id = id;
+        this.assignedAt = assignedAt;
+        this.scrumRole = scrumRole;
+        this.simulation = simulation;
+    }
 
     public SimulationUser() {
     }
@@ -37,13 +42,6 @@ public class SimulationUser {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     public Simulation getSimulation() {
         return simulation;
