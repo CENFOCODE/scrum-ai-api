@@ -1,7 +1,6 @@
 package com.project.demo.rest.simulationUser;
 
-import com.project.demo.logic.entity.gift.Gift;
-import com.project.demo.logic.entity.giftList.GiftList;
+
 import com.project.demo.logic.entity.http.GlobalResponseHandler;
 import com.project.demo.logic.entity.http.Meta;
 import com.project.demo.logic.entity.simulation.Simulation;
