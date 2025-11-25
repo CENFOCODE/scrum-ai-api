@@ -301,25 +301,21 @@ public class BacklogRestController {
 
                 BacklogSprint currentSprint = item.getSprint();
 
-                if (currentSprint != null && Objects.equals(currentSprint.getId(), newSprintId)) {
-                } else {
+                if (currentSprint == null || !Objects.equals(currentSprint.getId(), newSprintId)) {
+
                     if (currentSprint != null) {
                         currentSprint.removeItem(item);
-                        backlogSprintRepository.save(currentSprint);
                     }
 
                     BacklogSprint newSprint = backlogSprintRepository.findById(newSprintId)
                             .orElseThrow(() -> new RuntimeException("Sprint destino no encontrado"));
 
-                    if (!newSprint.getItems().contains(item)) {
-                        newSprint.addItem(item);
-                    }
-
-                    backlogSprintRepository.save(newSprint);
+                    newSprint.addItem(item);
                 }
             }
         }
 
+        // SUBTAREAS //
         if (body.containsKey("subtasks")) {
             List<BacklogSubtask> currentSubtasks = new ArrayList<>(item.getSubtasks());
             for (BacklogSubtask st : currentSubtasks) {

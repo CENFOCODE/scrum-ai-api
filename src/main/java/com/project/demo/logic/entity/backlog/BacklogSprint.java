@@ -1,5 +1,6 @@
 package com.project.demo.logic.entity.backlog;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "backlog_sprint")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class BacklogSprint {
 
     @Id
