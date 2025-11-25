@@ -16,7 +16,6 @@ public class ScenarioTemplate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "scenario_id", nullable = false)
     @JsonBackReference
