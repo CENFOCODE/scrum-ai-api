@@ -1,5 +1,6 @@
 package com.project.demo.logic.entity.scenarioTemplate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.demo.logic.entity.scenario.Scenario;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -15,6 +16,7 @@ public class ScenarioTemplate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "scenario_id", nullable = false)
     private Scenario scenario;
