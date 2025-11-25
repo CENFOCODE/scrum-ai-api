@@ -1,5 +1,7 @@
 package com.project.demo.logic.entity.simulationMetric;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.demo.logic.entity.simulation.Simulation;
 import com.project.demo.logic.entity.user.User;
 import jakarta.persistence.*;
@@ -14,6 +16,7 @@ public class SimulationMetric {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
 
     @ManyToOne
     @JoinColumn(name = "simulation_id", nullable = false)
@@ -31,6 +34,9 @@ public class SimulationMetric {
 
     @Column(name = "metric_value", nullable = false)
     private Double metricValue;
+
+    @Column(name = "metric_data", columnDefinition = "TEXT")
+    private String metricData;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -84,6 +90,14 @@ public class SimulationMetric {
 
     public void setMetricValue(Double metricValue) {
         this.metricValue = metricValue;
+    }
+
+    public String getMetricData() {
+        return metricData;
+    }
+
+    public void setMetricData(String metricData) {
+        this.metricData = metricData;
     }
 
     public Date getCreatedAt() {
