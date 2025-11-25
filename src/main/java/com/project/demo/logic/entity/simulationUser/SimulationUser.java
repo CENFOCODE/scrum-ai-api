@@ -21,14 +21,19 @@ public class SimulationUser {
     @Column(name = "scrum_role", nullable = false)
     private String scrumRole;
 
+    @ManyToOne
+    @JoinColumn(name = "user", nullable = false)
+    private User user;
+
     @Column(nullable = false, name = "assigned_at", updatable = false)
     private Date assignedAt;
 
-    public SimulationUser(Long id, Date assignedAt, String scrumRole, Simulation simulation) {
+    public SimulationUser(Long id, Date assignedAt, String scrumRole, Simulation simulation, User user) {
         this.id = id;
         this.assignedAt = assignedAt;
         this.scrumRole = scrumRole;
         this.simulation = simulation;
+        this.user = user;
     }
 
     public SimulationUser() {
@@ -66,4 +71,14 @@ public class SimulationUser {
     public void setScrumRole(String scrumRole) {
         this.scrumRole = scrumRole;
     }
+
+    
+    public User getUser() {
+        return user;
+    }
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
+
+
