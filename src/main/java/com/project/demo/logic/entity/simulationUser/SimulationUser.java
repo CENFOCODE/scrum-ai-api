@@ -15,21 +15,19 @@ public class SimulationUser {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "simulation_id", nullable = false)
+    @JoinColumn(name = "simulation_id",nullable = false)
     private Simulation simulation;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
 
     @Column(name = "scrum_role", nullable = false)
     private String scrumRole;
 
+    @ManyToOne
+    @JoinColumn(name = "user", nullable = false)
+    private User user;
+
     @Column(nullable = false, name = "assigned_at", updatable = false)
     private Date assignedAt;
-
-    public SimulationUser() {
-    }
 
     public SimulationUser(Long id, Date assignedAt, String scrumRole, Simulation simulation, User user) {
         this.id = id;
@@ -39,13 +37,17 @@ public class SimulationUser {
         this.user = user;
     }
 
-    public Long getId() {
+    public SimulationUser() {
+    }
+
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
+
 
     public Simulation getSimulation() {
         return simulation;
@@ -53,14 +55,6 @@ public class SimulationUser {
 
     public void setSimulation(Simulation simulation) {
         this.simulation = simulation;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public Date getAssignedAt() {
@@ -78,4 +72,14 @@ public class SimulationUser {
     public void setScrumRole(String scrumRole) {
         this.scrumRole = scrumRole;
     }
+
+
+    public User getUser() {
+        return user;
+    }
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
+
+
