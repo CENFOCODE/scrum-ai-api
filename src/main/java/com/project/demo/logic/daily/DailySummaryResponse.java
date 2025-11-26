@@ -1,4 +1,4 @@
-package com.project.demo.logic.dtos.daily;
+package com.project.demo.logic.daily;
 
 public class DailySummaryResponse {
 

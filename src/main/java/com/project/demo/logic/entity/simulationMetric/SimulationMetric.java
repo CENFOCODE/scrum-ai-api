@@ -32,6 +32,9 @@ public class SimulationMetric {
     @Column(name = "metric_value", nullable = false)
     private Double metricValue;
 
+    @Column(name = "metric_data", columnDefinition = "TEXT")
+    private String metricData;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Date createdAt;
@@ -84,6 +87,14 @@ public class SimulationMetric {
 
     public void setMetricValue(Double metricValue) {
         this.metricValue = metricValue;
+    }
+
+    public String getMetricData() {
+        return metricData;
+    }
+
+    public void setMetricData(String metricData) {
+        this.metricData = metricData;
     }
 
     public Date getCreatedAt() {

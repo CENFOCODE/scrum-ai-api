@@ -94,6 +94,8 @@ public class SecurityConfiguration {
                         // Handshake WebSocket debe ser público
                         .requestMatchers("/ws/**").permitAll()
 
+                        .requestMatchers(HttpMethod.GET, "/scenario/**").permitAll()
+
                         // Todo lo demás requiere autenticación
                         .anyRequest().authenticated()
                 )

@@ -9,14 +9,18 @@ import java.util.Date;
 @Entity
 @Table(name = "simulation_users")
 public class SimulationUser {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "simulation_id",nullable = false)
+    @JoinColumn(name = "simulation_id", nullable = false)
     private Simulation simulation;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "scrum_role", nullable = false)
     private String scrumRole;
@@ -24,24 +28,24 @@ public class SimulationUser {
     @Column(nullable = false, name = "assigned_at", updatable = false)
     private Date assignedAt;
 
-    public SimulationUser(Long id, Date assignedAt, String scrumRole, Simulation simulation) {
+    public SimulationUser() {
+    }
+
+    public SimulationUser(Long id, Date assignedAt, String scrumRole, Simulation simulation, User user) {
         this.id = id;
         this.assignedAt = assignedAt;
         this.scrumRole = scrumRole;
         this.simulation = simulation;
+        this.user = user;
     }
 
-    public SimulationUser() {
-    }
-
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
-
 
     public Simulation getSimulation() {
         return simulation;
@@ -49,6 +53,14 @@ public class SimulationUser {
 
     public void setSimulation(Simulation simulation) {
         this.simulation = simulation;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Date getAssignedAt() {

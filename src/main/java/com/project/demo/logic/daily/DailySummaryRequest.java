@@ -1,13 +1,33 @@
-package com.project.demo.logic.dtos.daily;
+package com.project.demo.logic.daily;
 
 import java.util.List;
 
 public class DailySummaryRequest {
 
+    private Long simulationId;
     private Answers answers;
     private Board board;
+    private String aiSummary;
 
-    // GETTERS & SETTERS
+    public DailySummaryRequest() {
+    }
+
+
+    public DailySummaryRequest(String aiSummary) {
+        this.aiSummary = aiSummary;
+    }
+    public Long getSimulationId(){
+        return simulationId;
+    }
+
+    public void setSimulationId(Long simulationId) {
+        this.simulationId = simulationId;
+    }
+
+    public String getAiSummary() { return aiSummary; }
+
+    public void setAiSummary(String aiSummary) { this.aiSummary = aiSummary; }
+
     public Answers getAnswers() {
         return answers;
     }
@@ -24,10 +44,6 @@ public class DailySummaryRequest {
         this.board = board;
     }
 
-
-    // -------------------------
-    // SUBCLASE: Answers
-    // -------------------------
     public static class Answers {
         private String yesterday;
         private String today;
@@ -58,10 +74,6 @@ public class DailySummaryRequest {
         }
     }
 
-
-    // -------------------------
-    // SUBCLASE: Board
-    // -------------------------
     public static class Board {
         private List<Task> todo;
         private List<Task> inProgress;
