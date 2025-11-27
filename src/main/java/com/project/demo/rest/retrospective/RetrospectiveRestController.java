@@ -8,11 +8,11 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/retrospective")
-public class RetrospectiveController {
+public class RetrospectiveRestController {
 
     private final RetrospectiveService service;
 
-    public RetrospectiveController(RetrospectiveService service) {
+    public RetrospectiveRestController(RetrospectiveService service) {
         this.service = service;
     }
 
