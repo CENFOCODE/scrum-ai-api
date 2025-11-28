@@ -18,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/simulation")
@@ -74,7 +75,9 @@ public class SimulationRestController {
 
         historyRepository.save(history);
 
-        return ResponseEntity.ok("Simulation completed and history created.");
+        return ResponseEntity.ok(
+                Map.of("message", "Simulation completed and history created.")
+        );
     }
 }
 
