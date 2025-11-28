@@ -22,7 +22,7 @@ public class Simulation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "scenario_id", nullable = false)
     private Scenario scenario;
 
@@ -46,18 +46,23 @@ public class Simulation {
     private Double averageScore;
 
     @OneToMany(mappedBy = "simulation")
+    @JsonIgnore
     private List<Feedback> feedbackList;
 
     @OneToMany(mappedBy = "simulation")
+    @JsonIgnore
     private List<SimulationMetric> metrics;
 
     @OneToMany(mappedBy = "relatedSimulation")
+    @JsonIgnore
     private List<ImprovementPlan> improvementPlans;
 
     @OneToMany(mappedBy = "simulation")
+    @JsonIgnore
     private List<History> historyList;
 
     @OneToMany(mappedBy = "simulation")
+    @JsonIgnore
     private List<CeremonySession> sessions;
 
     public Simulation(Long id, Scenario scenario, User createdBy, String difficultyLevel, Date startDate, Date endDate, String status, Double averageScore) {
