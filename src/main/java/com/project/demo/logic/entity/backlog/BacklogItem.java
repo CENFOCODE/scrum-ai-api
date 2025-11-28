@@ -1,6 +1,9 @@
 package com.project.demo.logic.entity.backlog;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -37,11 +40,16 @@ public class BacklogItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sprint_id")
-    @JsonIgnore
+    @JsonBackReference
     private BacklogSprint sprint;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BacklogSubtask> subtasks = new ArrayList<>();
+
+    @JsonProperty("sprintId")
+    public Long getSprintId() {
+        return sprint != null ? sprint.getId() : null;
+    }
 
     public BacklogItem() {
     }
