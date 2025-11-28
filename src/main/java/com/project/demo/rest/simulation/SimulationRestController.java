@@ -62,17 +62,16 @@ public class SimulationRestController {
         simulation.setStatus("COMPLETED");
         simulation.setEndDate(new Date());
 
+        // Primero guardar simulation actualizada
+        simulation = simulationRepository.save(simulation);
+
         // Crear registro en History
         History history = new History();
         history.setSimulation(simulation);
-        history.setUser(simulation.getCreatedBy());
+        history.setUser(simulation.getCreatedBy());  // debe existir createdBy
         history.setFinalScore(simulation.getAverageScore());
-        history.setTranscript("Simulación finalizada correctamente."); // opcional
+        history.setTranscript("Simulación finalizada correctamente.");
 
-        // Guardar simulation
-        simulationRepository.save(simulation);
-
-        // Guardar history
         historyRepository.save(history);
 
         return ResponseEntity.ok("Simulation completed and history created.");
