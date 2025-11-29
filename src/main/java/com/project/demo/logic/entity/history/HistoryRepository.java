@@ -14,4 +14,6 @@ public interface HistoryRepository extends JpaRepository<History, Long> {
     @Query("SELECT h FROM History h WHERE h.user.id = :userId AND LOWER(h.simulation.scenario.ceremonyType) = LOWER(:ceremonyType)")
     List<History> findByUserAndCeremony(@Param("userId") Long userId, @Param("ceremonyType") String ceremonyType);
 
+    boolean existsBySimulationId(Long simulationId);
+
 }

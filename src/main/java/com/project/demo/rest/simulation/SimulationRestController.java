@@ -65,23 +65,24 @@ public class SimulationRestController {
         Simulation simulation = simulationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Simulation not found"));
 
-        // Cambiar estado
+
+        if (historyRepository.existsBySimulationId(simulation.getId())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                    Map.of("error", "Ya existe un historial para esta simulación.")
+            );
+        }
+
         simulation.setStatus("COMPLETED");
         simulation.setEndDate(new Date());
-
-        // Guardar simulation actualizada
         simulation = simulationRepository.save(simulation);
 
-        // 1️⃣ Obtener el usuario creador de la simulación
         Long userId = simulation.getCreatedBy().getId();
 
-        // 2️⃣ Buscar SimulationUser
         Optional<SimulationUser> simUserOpt =
                 simulationUserRepository.findBySimulationIdAndUserId(simulation.getId(), userId);
 
         SimulationUser simUser = simUserOpt.orElse(null);
-
-        // 3️⃣ Crear el History
+        
         History history = new History();
         history.setSimulation(simulation);
         history.setUser(simulation.getCreatedBy());
