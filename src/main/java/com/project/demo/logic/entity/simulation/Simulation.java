@@ -1,5 +1,6 @@
 package com.project.demo.logic.entity.simulation;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.demo.logic.entity.ceremonySession.CeremonySession;
 import com.project.demo.logic.entity.feedback.Feedback;
@@ -64,6 +65,10 @@ public class Simulation {
     @OneToMany(mappedBy = "simulation")
     @JsonIgnore
     private List<CeremonySession> sessions;
+
+    @OneToMany(mappedBy = "simulation", fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<SimulationUser> simulationUsers;
 
     public Simulation(Long id, Scenario scenario, User createdBy, String difficultyLevel, Date startDate, Date endDate, String status, Double averageScore) {
         this.id = id;
@@ -182,5 +187,12 @@ public class Simulation {
 
     public void setSessions(List<CeremonySession> sessions) {
         this.sessions = sessions;
+    }
+
+    public List<SimulationUser> getSimulationUsers() {
+        return simulationUsers;
+    }
+    public void setSimulationUsers(List<SimulationUser> simulationUsers) {
+        this.simulationUsers = simulationUsers;
     }
 }

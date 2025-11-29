@@ -7,6 +7,9 @@ import com.project.demo.logic.entity.http.Meta;
 import com.project.demo.logic.entity.simulation.Simulation;
 import com.project.demo.logic.entity.simulation.SimulationRepository;
 import com.project.demo.logic.entity.history.HistoryRepository;
+import com.project.demo.logic.entity.simulationUser.SimulationUser;
+import com.project.demo.logic.entity.simulationUser.SimulationUserRepository;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/simulation")
@@ -28,6 +32,8 @@ public class SimulationRestController {
     private HistoryRepository historyRepository;
     @Autowired
     private SimulationRepository simulationRepository;
+    @Autowired
+    private SimulationUserRepository simulationUserRepository;
 
     @GetMapping
     public ResponseEntity<?> getAll(
@@ -63,15 +69,29 @@ public class SimulationRestController {
         simulation.setStatus("COMPLETED");
         simulation.setEndDate(new Date());
 
-        // Primero guardar simulation actualizada
+        // Guardar simulation actualizada
         simulation = simulationRepository.save(simulation);
 
-        // Crear registro en History
+        // 1️⃣ Obtener el usuario creador de la simulación
+        Long userId = simulation.getCreatedBy().getId();
+
+        // 2️⃣ Buscar SimulationUser
+        Optional<SimulationUser> simUserOpt =
+                simulationUserRepository.findBySimulationIdAndUserId(simulation.getId(), userId);
+
+        SimulationUser simUser = simUserOpt.orElse(null);
+
+        // 3️⃣ Crear el History
         History history = new History();
         history.setSimulation(simulation);
-        history.setUser(simulation.getCreatedBy());  // debe existir createdBy
+        history.setUser(simulation.getCreatedBy());
         history.setFinalScore(simulation.getAverageScore());
         history.setTranscript("Simulación finalizada correctamente.");
+
+        // Solo si existe relación SimulationUser
+        if (simUser != null) {
+            history.setSimulationUser(simUser);
+        }
 
         historyRepository.save(history);
 
