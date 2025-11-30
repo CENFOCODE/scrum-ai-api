@@ -369,8 +369,8 @@ public class ScenarioTemplateSeeder {
 
         matrix.setPrompt(3, "Product Owner",
                 "Actúa como Product Owner en una reunión de Retrospective. Dificultad: Alta.\n" +
-                        "Analiza métricas de valor de negocio, optimiza procesos de feedback con stakeholders.\n" +
-                        "Redefine estrategias de producto basado en aprendizajes del sprint.");
+                        "Dame una situacion simulada para poder practicar mis abilidades y dame retrospetiva al respecto.\n" +
+                        "Solo me tienes que dar la situacion simulada y esperar recibir mis notas de la reunion.");
 
         matrix.setPrompt(3, "QA",
                 "Actúa como QA en una reunión de Retrospective. Dificultad: Alta.\n" +

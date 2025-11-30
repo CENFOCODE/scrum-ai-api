@@ -82,7 +82,7 @@ public class SimulationRestController {
                 simulationUserRepository.findBySimulationIdAndUserId(simulation.getId(), userId);
 
         SimulationUser simUser = simUserOpt.orElse(null);
-        
+
         History history = new History();
         history.setSimulation(simulation);
         history.setUser(simulation.getCreatedBy());
