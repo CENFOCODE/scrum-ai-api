@@ -1,5 +1,6 @@
 package com.project.demo.logic.entity.scenarioTemplate;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.project.demo.logic.entity.scenario.Scenario;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,6 +18,7 @@ public class ScenarioTemplate {
 
     @ManyToOne
     @JoinColumn(name = "scenario_id", nullable = false)
+    @JsonBackReference
     private Scenario scenario;
 
     @Column(name = "step_order", nullable = false)

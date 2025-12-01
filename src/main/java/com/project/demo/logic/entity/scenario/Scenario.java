@@ -1,5 +1,7 @@
 package com.project.demo.logic.entity.scenario;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.demo.logic.entity.scenarioTemplate.ScenarioTemplate;
 import jakarta.persistence.*;
 
@@ -45,6 +47,7 @@ public class Scenario {
     private String team;
 
     @OneToMany(mappedBy = "scenario")
+    @JsonManagedReference
     private List<ScenarioTemplate> templates;
 
     public Scenario() {}
