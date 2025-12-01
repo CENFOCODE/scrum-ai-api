@@ -50,6 +50,10 @@ public class Scenario {
     @JsonManagedReference
     private List<ScenarioTemplate> templates;
 
+    @Column(columnDefinition = "json")
+    private String initialTasks;
+
+
     public Scenario() {}
 
     public Long getId() {
@@ -113,6 +117,10 @@ public class Scenario {
         return team;
     }
 
+    public String getInitialTasks() {
+        return initialTasks;
+    }
+
     public void setTeam(String team) {
         this.team = team;
     }
@@ -124,5 +132,9 @@ public class Scenario {
 
     public void setTemplates(List<ScenarioTemplate> templates) {
         this.templates = templates;
+    }
+
+    public void setInitialTasks(String initialTasks) {
+        this.initialTasks = initialTasks;
     }
 }

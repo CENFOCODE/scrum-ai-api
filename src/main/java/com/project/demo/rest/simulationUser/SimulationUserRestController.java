@@ -57,6 +57,11 @@ public class SimulationUserRestController {
     @PostMapping
     public ResponseEntity<SimulationUser> createSimulationUser(@RequestBody SimulationUser simulationUser) {
 
+        System.out.println("📥 SIMULATION USER RECIBIDO:");
+        System.out.println("Simulation ID: " + (simulationUser.getSimulation() != null ? simulationUser.getSimulation().getId() : "null"));
+        System.out.println("User ID: " + (simulationUser.getUser() != null ? simulationUser.getUser().getId() : "null"));
+        System.out.println("Role: " + simulationUser.getScrumRole());
+
         // 1️⃣ VALIDAR Y CARGAR SIMULATION COMPLETA
         if (simulationUser.getSimulation() != null && simulationUser.getSimulation().getId() != null) {
             Simulation fullSim = simulationRepository.findById(simulationUser.getSimulation().getId())

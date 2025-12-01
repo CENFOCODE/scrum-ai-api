@@ -1,4 +1,5 @@
 package com.project.demo.logic.entity.user;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.demo.logic.entity.achievements.Achievement;
 import com.project.demo.logic.entity.feedback.Feedback;
 import com.project.demo.logic.entity.history.History;
@@ -82,6 +83,7 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Feedback> feedbackList;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<SimulationMetric> metrics;
 

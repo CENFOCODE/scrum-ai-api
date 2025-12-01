@@ -1,5 +1,7 @@
-package com.project.demo.logic.entity.scenarioTemplate;
+package com.project.demo.rest.scenarioTemplate;
 
+import com.project.demo.logic.entity.scenarioTemplate.ScenarioTemplate;
+import com.project.demo.logic.entity.scenarioTemplate.ScenarioTemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

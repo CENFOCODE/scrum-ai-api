@@ -3,6 +3,7 @@ package com.project.demo.logic.entity.simulationUser;
 import com.project.demo.logic.entity.simulation.Simulation;
 import com.project.demo.logic.entity.user.User;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
@@ -26,6 +27,7 @@ public class SimulationUser {
     @JoinColumn(name = "user", nullable = false)
     private User user;
 
+    @CreationTimestamp
     @Column(nullable = false, name = "assigned_at", updatable = false)
     private Date assignedAt;
 
