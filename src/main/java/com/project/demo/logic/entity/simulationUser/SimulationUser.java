@@ -24,7 +24,7 @@ public class SimulationUser {
     private String scrumRole;
 
     @ManyToOne
-    @JoinColumn(name = "user", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(nullable = false, name = "assigned_at", updatable = false)
