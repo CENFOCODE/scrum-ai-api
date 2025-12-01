@@ -1,10 +1,12 @@
 package com.project.demo.logic.entity.backlog;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "backlog_subtask")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class BacklogSubtask {
 
     @Id
@@ -25,53 +27,25 @@ public class BacklogSubtask {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "backlog_item_id")
-    @JsonIgnore
+    @JsonBackReference
     private BacklogItem item;
 
-    public BacklogSubtask() {
-    }
+    public BacklogSubtask() {}
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
 
-    public String getCode() {
-        return code;
-    }
+    public String getCode() { return code; }
+    public void setCode(String code) { this.code = code; }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public String getTitle() {
-        return title;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public BacklogItem getItem() {
-        return item;
-    }
-
-    public void setItem(BacklogItem item) {
-        this.item = item;
-    }
+    public BacklogItem getItem() { return item; }
+    public void setItem(BacklogItem item) { this.item = item; }
 }

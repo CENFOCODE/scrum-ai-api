@@ -1,11 +1,8 @@
 package com.project.demo.logic.entity.backlog;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,15 +41,10 @@ public class BacklogItem {
     private BacklogSprint sprint;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<BacklogSubtask> subtasks = new ArrayList<>();
 
-    @JsonProperty("sprintId")
-    public Long getSprintId() {
-        return sprint != null ? sprint.getId() : null;
-    }
-
-    public BacklogItem() {
-    }
+    public BacklogItem() {}
 
     public Long getId() {
         return id;
@@ -61,7 +53,6 @@ public class BacklogItem {
     public String getKey() {
         return key;
     }
-
     public void setKey(String key) {
         this.key = key;
     }
@@ -69,7 +60,6 @@ public class BacklogItem {
     public String getTitle() {
         return title;
     }
-
     public void setTitle(String title) {
         this.title = title;
     }
@@ -77,7 +67,6 @@ public class BacklogItem {
     public String getModuleName() {
         return moduleName;
     }
-
     public void setModuleName(String moduleName) {
         this.moduleName = moduleName;
     }
@@ -85,7 +74,6 @@ public class BacklogItem {
     public String getStatus() {
         return status;
     }
-
     public void setStatus(String status) {
         this.status = status;
     }
@@ -93,7 +81,6 @@ public class BacklogItem {
     public Integer getStoryPoints() {
         return storyPoints;
     }
-
     public void setStoryPoints(Integer storyPoints) {
         this.storyPoints = storyPoints;
     }
@@ -101,7 +88,6 @@ public class BacklogItem {
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
@@ -109,7 +95,6 @@ public class BacklogItem {
     public Long getPlanningTicketId() {
         return planningTicketId;
     }
-
     public void setPlanningTicketId(Long planningTicketId) {
         this.planningTicketId = planningTicketId;
     }
@@ -117,17 +102,26 @@ public class BacklogItem {
     public BacklogSprint getSprint() {
         return sprint;
     }
-
     public void setSprint(BacklogSprint sprint) {
         this.sprint = sprint;
     }
 
     public List<BacklogSubtask> getSubtasks() {
-        return subtasks;
+        if (this.subtasks == null) {
+            this.subtasks = new ArrayList<>();
+        }
+        this.subtasks.size();
+        return this.subtasks;
     }
 
     public void setSubtasks(List<BacklogSubtask> subtasks) {
-        this.subtasks = subtasks;
+
+        this.subtasks.clear();
+        if (subtasks != null) {
+            for (BacklogSubtask st : subtasks) {
+                this.addSubtask(st);
+            }
+        }
     }
 
     public void addSubtask(BacklogSubtask subtask) {

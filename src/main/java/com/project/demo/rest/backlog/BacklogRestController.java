@@ -5,6 +5,7 @@ import com.project.demo.logic.entity.http.GlobalResponseHandler;
 import com.project.demo.logic.entity.planningTicket.PlanningTicket;
 import com.project.demo.logic.entity.planningTicket.PlanningTicketRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -256,6 +257,7 @@ public class BacklogRestController {
     }
 
     // UPDATE ITEM + SUBTASKS //
+    @Transactional
     @PutMapping("/items/{id}")
     public ResponseEntity<?> updateItem(
             @PathVariable Long id,
@@ -275,35 +277,21 @@ public class BacklogRestController {
         if (body.containsKey("description"))
             item.setDescription((String) body.get("description"));
 
+
         // MOVER HISTORIA //
         if (body.containsKey("sprintId")) {
 
             Long newSprintId = Long.valueOf(body.get("sprintId").toString());
+            BacklogSprint oldSprint = item.getSprint();
 
-            // Recuperar sprint original desde la BD
-            BacklogSprint currentSprint = backlogSprintRepository
-                    .findById(item.getSprint().getId())
-                    .orElse(null);
-
-            // Si viene null o si es diferente, moverlo
-            if (currentSprint == null || !Objects.equals(currentSprint.getId(), newSprintId)) {
-
-                if (currentSprint != null) {
-                    currentSprint.removeItem(item);
-                    backlogSprintRepository.save(currentSprint);
-                }
+            if (!Objects.equals(oldSprint.getId(), newSprintId)) {
 
                 BacklogSprint newSprint = backlogSprintRepository.findById(newSprintId)
                         .orElseThrow(() -> new RuntimeException("Sprint destino no encontrado"));
 
-                newSprint.addItem(item);
-
-                backlogSprintRepository.save(newSprint);
-                backlogItemRepository.save(item);
+                item.setSprint(newSprint);
             }
         }
-
-
 
         // SUBTAREAS //
         if (body.containsKey("subtasks")) {
@@ -311,37 +299,69 @@ public class BacklogRestController {
             List<Map<String, Object>> subtasksBody =
                     (List<Map<String, Object>>) body.get("subtasks");
 
-            for (BacklogSubtask st : item.getSubtasks()) {
-                backlogSubtaskRepository.delete(st);
-            }
-
-            item.getSubtasks().clear();
-            backlogItemRepository.save(item);
-
-            List<BacklogSubtask> newList = new ArrayList<>();
+            // obtener la lista manejada por Hibernate
+            List<BacklogSubtask> existing = item.getSubtasks();
+            List<BacklogSubtask> keep = new ArrayList<>();
 
             for (Map<String, Object> stBody : subtasksBody) {
 
-                BacklogSubtask st = new BacklogSubtask();
-                st.setCode((String) stBody.get("code"));
-                st.setTitle((String) stBody.get("title"));
-                st.setDescription((String) stBody.get("description"));
-                st.setStatus((String) stBody.get("status"));
-                st.setItem(item);
+                Long stId = null;
+                try {
+                    if (stBody.get("id") != null) {
+                        String raw = String.valueOf(stBody.get("id"));
+                        if (!raw.trim().isEmpty()) stId = Long.valueOf(raw);
+                    }
+                } catch (Exception ignored) {
+                }
 
-                backlogSubtaskRepository.save(st);
-                newList.add(st);
+                BacklogSubtask st = null;
+
+                // Buscar subtarea existente
+                if (stId != null) {
+                    for (BacklogSubtask e : existing) {
+                        if (Objects.equals(e.getId(), stId)) {
+                            st = e;
+                            break;
+                        }
+                    }
+                }
+
+                // Crear nueva subtarea si no existía
+                if (st == null) {
+                    st = new BacklogSubtask();
+                    st.setItem(item);
+                    existing.add(st);
+                }
+
+                // Actualizar datos
+                st.setCode((String) stBody.getOrDefault("code", null));
+                st.setTitle((String) stBody.getOrDefault("title", ""));
+                st.setDescription((String) stBody.getOrDefault("description", ""));
+                st.setStatus((String) stBody.getOrDefault("status", "TO DO"));
+
+                keep.add(st);
             }
 
-            item.setSubtasks(newList);
+            // Eliminar las que ya no están
+            existing.removeIf(st -> !keep.contains(st));
         }
 
+
+        // Guardar //
         backlogItemRepository.save(item);
 
-        BacklogSprint responseSprint = item.getSprint();
+        BacklogSprint responseSprint = backlogSprintRepository.findById(item.getSprint().getId())
+                .orElseThrow(() -> new RuntimeException("Sprint no encontrado"));
+
+        // carga de subtareas (lazy loading fix)
+        responseSprint.getItems().forEach(it -> it.getSubtasks().size());
+
 
         return new GlobalResponseHandler().handleResponse(
-                "Historia actualizada correctamente", responseSprint, HttpStatus.OK, request
+                "Historia actualizada correctamente",
+                item,
+                HttpStatus.OK,
+                request
         );
     }
 }
