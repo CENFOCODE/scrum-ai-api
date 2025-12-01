@@ -3,6 +3,7 @@ package com.project.demo.logic.service.rtc.service;
 import com.project.demo.logic.daily.DailyChatRequest;
 import com.project.demo.logic.daily.DailySummaryRequest;
 import com.project.demo.logic.daily.DailyTemplateService;
+import com.project.demo.logic.daily.DailyChatRequest;
 import com.project.demo.logic.dtos.AIResponseDTO;
 import com.project.demo.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,37 +45,19 @@ public class GroqService {
     @Value("${groq.api.key}")
     private String apiKey;
 
+
     /** Cliente HTTP utilizado para realizar llamadas REST contra la API de Groq. */
     private final RestTemplate restTemplate = new RestTemplate();
 
 
-    // =====================================================================
-    // MÉTODO GENÉRICO – NO TOCAR
-    // =====================================================================
-
-    /**
-     * Ejecuta una solicitud simple al modelo Llama 3.1 enviando únicamente un prompt del usuario.
-     *
-     * <p>
-     * Este método es utilizado globalmente por:
-     * <ul>
-     *   <li>Chatbot general</li>
-     *   <li>Planning</li>
-     *   <li>Review</li>
-     *   <li>Retrospective</li>
-     *   <li>Entrenamiento de roles</li>
-     * </ul>
-     * </p>
-     *
-     * @param prompt Texto enviado por el usuario.
-     * @return {@link AIResponseDTO} con la respuesta generada o mensaje de error.
-     */
     public AIResponseDTO askGroq(String prompt) {
         String url = "https://api.groq.com/openai/v1/chat/completions";
+
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(apiKey);
+
 
         Map<String, Object> body = Map.of(
                 "model", "llama-3.1-8b-instant",
@@ -84,26 +67,29 @@ public class GroqService {
         );
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+
         ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
 
-        AIResponseDTO dto = new AIResponseDTO();
 
-        try {
-            List<Map<String, Object>> choices =
-                    (List<Map<String, Object>>) response.getBody().get("choices");
+        List<Map<String, Object>> choices =
+                (List<Map<String, Object>>) response.getBody().get("choices");
 
-            String answer =
-                    ((Map<String, Object>) choices.get(0).get("message"))
-                            .get("content")
-                            .toString();
+        AIResponseDTO airesponse = new AIResponseDTO();
 
-            dto.setAnswer(answer);
+        if (choices != null && !choices.isEmpty()) {
+            Map<String, Object> message =
+                    (Map<String, Object>) choices.get(0).get("message");
 
-        } catch (Exception e) {
-            dto.setMessage("No se pudo obtener respuesta de la IA.");
+            if (message != null && message.containsKey("content")) {
+                String answer = message.get("content").toString();
+                airesponse.setAnswer(answer);
+                return airesponse;
+            }
         }
 
-        return dto;
+        // Respuesta por defecto si algo salió mal
+        airesponse.setMessage("No se pudo obtener respuesta de la IA.");
+        return airesponse;
     }
 
 

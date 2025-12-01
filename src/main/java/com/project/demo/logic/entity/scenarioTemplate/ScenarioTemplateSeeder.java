@@ -316,66 +316,90 @@ public class ScenarioTemplateSeeder {
 
         // DIFICULTAD BAJA
         matrix.setPrompt(1, "Scrum Master",
-                "Actúa como Scrum Master en una reunión de Retrospective. Dificultad: Baja.\n" +
-                        "Facilita análisis básico: qué salió bien, qué no salió bien, qué podría mejorar.\n" +
-                        "Mantén un ambiente seguro y fomenta la participación de todos.");
+                 "Yo voy a ser el Scrum Master para esta reunion de Retrospective. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder practicar mis abilidades y dame feedback al respecto.\n" +
+                        "Solo me tienes que dar la situacion simulada y esperar recibir mis notas de la reunion.\n" +
+                        "La notas de la reunion van a ser cuatro tipos: Que nos ayudó?, Que nos atrasó?, Ideas, Acciones.\n" +
+                         "Basados en las notas enviadas, que feedback me darias para mejorar en mi rol de scrum?");
 
         matrix.setPrompt(1, "Developer",
-                "Actúa como Developer en una reunión de Retrospective. Dificultad: Baja.\n" +
-                        "Comparte experiencias técnicas del sprint, identifica impedimentos básicos.\n" +
-                        "Propone mejoras simples en procesos de desarrollo.");
+                "Yo voy a ser el Developer para esta reunion de Retrospective. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder practicar mis abilidades y dame feedback al respecto.\n" +
+                        "Solo me tienes que dar la situacion simulada y esperar recibir mis notas de la reunion.\n" +
+                        "La notas de la reunion van a ser cuatro tipos: Que nos ayudó?, Que nos atrasó?, Ideas, Acciones.\n" +
+                        "Basados en las notas enviadas, que feedback me darias para mejorar en mi rol de scrum?");
 
         matrix.setPrompt(1, "Product Owner",
-                "Actúa como Product Owner en una reunión de Retrospective. Dificultad: Baja.\n" +
-                        "Reflexiona sobre colaboración con el equipo, evalúa claridad de requisitos.\n" +
-                        "Propone mejoras en comunicación y definición de historias.");
+                "Yo voy a ser el Product Owner para esta reunion de Retrospective. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder practicar mis abilidades y dame feedback al respecto.\n" +
+                        "Solo me tienes que dar la situacion simulada y esperar recibir mis notas de la reunion.\n" +
+                        "La notas de la reunion van a ser cuatro tipos: Que nos ayudó?, Que nos atrasó?, Ideas, Acciones.\n" +
+                        "Basados en las notas enviadas, que feedback me darias para mejorar en mi rol de scrum?");
 
         matrix.setPrompt(1, "QA",
-                "Actúa como QA en una reunión de Retrospective. Dificultad: Baja.\n" +
-                        "Analiza procesos de testing del sprint, identifica gaps básicos en calidad.\n" +
-                        "Propone mejoras simples en procedimientos de QA.");
+                "Yo voy a ser el QA para esta reunion de Retrospective. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder practicar mis abilidades y dame feedback al respecto.\n" +
+                        "Solo me tienes que dar la situacion simulada y esperar recibir mis notas de la reunion.\n" +
+                        "La notas de la reunion van a ser cuatro tipos: Que nos ayudó?, Que nos atrasó?, Ideas, Acciones.\n" +
+                        "Basados en las notas enviadas, que feedback me darias para mejorar en mi rol de scrum?");
 
         // DIFICULTAD MEDIA
         matrix.setPrompt(2, "Scrum Master",
-                "Actúa como Scrum Master en una reunión de Retrospective. Dificultad: Media.\n" +
-                        "Usa técnicas como Start/Stop/Continue, identifica patrones de comportamiento.\n" +
-                        "Facilita compromisos de mejora concretos y medibles.");
+                "Yo voy a ser el Scrum Master para esta reunion de Retrospective. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder practicar mis abilidades y dame feedback al respecto.\n" +
+                        "Solo me tienes que dar la situacion simulada y esperar recibir mis notas de la reunion.\n" +
+                        "La notas de la reunion van a ser cuatro tipos: Que nos ayudó?, Que nos atrasó?, Ideas, Acciones.\n" +
+                        "Basados en las notas enviadas, que feedback me darias para mejorar en mi rol de scrum?");
 
         matrix.setPrompt(2, "Developer",
-                "Actúa como Developer en una reunión de Retrospective. Dificultad: Media.\n" +
-                        "Analiza deuda técnica acumulada, propone mejoras en prácticas de desarrollo.\n" +
-                        "Evalúa herramientas y procesos técnicos del equipo.");
+                "Yo voy a ser el Developer para esta reunion de Retrospective. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder practicar mis abilidades y dame feedback al respecto.\n" +
+                        "Solo me tienes que dar la situacion simulada y esperar recibir mis notas de la reunion.\n" +
+                        "La notas de la reunion van a ser cuatro tipos: Que nos ayudó?, Que nos atrasó?, Ideas, Acciones.\n" +
+                        "Basados en las notas enviadas, que feedback me darias para mejorar en mi rol de scrum?");
 
         matrix.setPrompt(2, "Product Owner",
-                "Actúa como Product Owner en una reunión de Retrospective. Dificultad: Media.\n" +
-                        "Evalúa efectividad de comunicación de requisitos, analiza feedback de stakeholders.\n" +
-                        "Mejora procesos de priorización y refinamiento.");
+                "Yo voy a ser el Product Owner para esta reunion de Retrospective. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder practicar mis abilidades y dame feedback al respecto.\n" +
+                        "Solo me tienes que dar la situacion simulada y esperar recibir mis notas de la reunion.\n" +
+                        "La notas de la reunion van a ser cuatro tipos: Que nos ayudó?, Que nos atrasó?, Ideas, Acciones.\n" +
+                        "Basados en las notas enviadas, que feedback me darias para mejorar en mi rol de scrum?");
 
         matrix.setPrompt(2, "QA",
-                "Actúa como QA en una reunión de Retrospective. Dificultad: Media.\n" +
-                        "Analiza efectividad de estrategias de testing, propone automatización.\n" +
-                        "Evalúa métricas de calidad del sprint y define mejoras.");
+                "Yo voy a ser el QA para esta reunion de Retrospective. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder practicar mis abilidades y dame feedback al respecto.\n" +
+                        "Solo me tienes que dar la situacion simulada y esperar recibir mis notas de la reunion.\n" +
+                        "La notas de la reunion van a ser cuatro tipos: Que nos ayudó?, Que nos atrasó?, Ideas, Acciones.\n" +
+                        "Basados en las notas enviadas, que feedback me darias para mejorar en mi rol de scrum?");
 
         // DIFICULTAD ALTA
         matrix.setPrompt(3, "Scrum Master",
-                "Actúa como Scrum Master en una reunión de Retrospective. Dificultad: Alta.\n" +
-                        "Facilita conversaciones difíciles sobre disfunciones del equipo.\n" +
-                        "Analiza métricas de flujo y diseña experimentos de mejora avanzados.");
+                "Yo voy a ser el Scrum Master para esta reunion de Retrospective. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder practicar mis abilidades y dame feedback al respecto.\n" +
+                        "Solo me tienes que dar la situacion simulada y esperar recibir mis notas de la reunion.\n" +
+                        "La notas de la reunion van a ser cuatro tipos: Que nos ayudó?, Que nos atrasó?, Ideas, Acciones.\n" +
+                        "Basados en las notas enviadas, que feedback me darias para mejorar en mi rol de scrum?");
 
         matrix.setPrompt(3, "Developer",
-                "Actúa como Developer en una reunión de Retrospective. Dificultad: Alta.\n" +
-                        "Lidera análisis profundo de arquitectura y procesos, propone refactoring estratégico.\n" +
-                        "Mentoriza mejoras técnicas y evalúa impacto a largo plazo.");
+                "Yo voy a ser el Developer para esta reunion de Retrospective. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder practicar mis abilidades y dame feedback al respecto.\n" +
+                        "Solo me tienes que dar la situacion simulada y esperar recibir mis notas de la reunion.\n" +
+                        "La notas de la reunion van a ser cuatro tipos: Que nos ayudó?, Que nos atrasó?, Ideas, Acciones.\n" +
+                        "Basados en las notas enviadas, que feedback me darias para mejorar en mi rol de scrum?");
 
         matrix.setPrompt(3, "Product Owner",
-                "Actúa como Product Owner en una reunión de Retrospective. Dificultad: Alta.\n" +
-                        "Analiza métricas de valor de negocio, optimiza procesos de feedback con stakeholders.\n" +
-                        "Redefine estrategias de producto basado en aprendizajes del sprint.");
+                "Yo voy a ser el Product Owner para esta reunion de Retrospective. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder practicar mis abilidades y dame feedback al respecto.\n" +
+                        "Solo me tienes que dar la situacion simulada y esperar recibir mis notas de la reunion.\n" +
+                        "La notas de la reunion van a ser cuatro tipos: Que nos ayudó?, Que nos atrasó?, Ideas, Acciones.\n" +
+                        "Basados en las notas enviadas, que feedback me darias para mejorar en mi rol de scrum?");
 
         matrix.setPrompt(3, "QA",
-                "Actúa como QA en una reunión de Retrospective. Dificultad: Alta.\n" +
-                        "Diseña estrategias de calidad avanzadas, analiza tendencias de defectos complejas.\n" +
-                        "Optimiza procesos de testing end-to-end y define métricas de calidad avanzadas.");
+                "Yo voy a ser el QA para esta reunion de Retrospective. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder practicar mis abilidades y dame feedback al respecto.\n" +
+                        "Solo me tienes que dar la situacion simulada y esperar recibir mis notas de la reunion.\n" +
+                        "La notas de la reunion van a ser cuatro tipos: Que nos ayudó?, Que nos atrasó?, Ideas, Acciones.\n" +
+                        "Basados en las notas enviadas, que feedback me darias para mejorar en mi rol de scrum?");
 
         return matrix;
     }

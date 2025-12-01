@@ -1,5 +1,7 @@
 package com.project.demo.logic.entity.simulationMetric;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.demo.logic.entity.simulation.Simulation;
 import com.project.demo.logic.entity.user.User;
 import jakarta.persistence.*;
@@ -14,6 +16,7 @@ public class SimulationMetric {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
 
     @ManyToOne
     @JoinColumn(name = "simulation_id", nullable = false)
