@@ -1,5 +1,6 @@
 package com.project.demo.logic.entity.simulationUser;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.project.demo.logic.entity.simulation.Simulation;
 import com.project.demo.logic.entity.user.User;
 import jakarta.persistence.*;
@@ -15,6 +16,7 @@ public class SimulationUser {
 
     @ManyToOne
     @JoinColumn(name = "simulation_id",nullable = false)
+    @JsonBackReference
     private Simulation simulation;
 
 
@@ -22,7 +24,7 @@ public class SimulationUser {
     private String scrumRole;
 
     @ManyToOne
-    @JoinColumn(name = "user", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(nullable = false, name = "assigned_at", updatable = false)
