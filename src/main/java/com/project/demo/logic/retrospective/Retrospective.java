@@ -16,6 +16,7 @@ public class Retrospective {
     @Column(columnDefinition = "TEXT")
     private String retrospectiveJson;
 
+
     public Retrospective() {}
 
     public Long getId() {
@@ -41,4 +42,5 @@ public class Retrospective {
     public void setRetrospectiveJson(String retrospectiveJson) {
         this.retrospectiveJson = retrospectiveJson;
     }
+
 }

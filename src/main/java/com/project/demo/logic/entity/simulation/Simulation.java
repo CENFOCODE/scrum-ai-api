@@ -2,6 +2,7 @@ package com.project.demo.logic.entity.simulation;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.demo.logic.entity.ceremonySession.CeremonySession;
 import com.project.demo.logic.entity.feedback.Feedback;
 import com.project.demo.logic.entity.history.History;

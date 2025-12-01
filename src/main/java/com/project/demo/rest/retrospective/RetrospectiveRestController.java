@@ -24,7 +24,6 @@ public class RetrospectiveRestController {
     private final RetrospectiveService service;
     private final RetrospectiveRepository retrospectiveRepository;
 
-
     public RetrospectiveRestController(RetrospectiveService service, RetrospectiveRepository retrospectiveRepository) {
         this.service = service;
         this.retrospectiveRepository = retrospectiveRepository;
@@ -51,15 +50,18 @@ public class RetrospectiveRestController {
     @PostMapping("/save")
     public Map<String, Object> save(@RequestBody Map<String, Object> request) {
 
-        Retrospective retro = service.save(request);
+        Map<String, Object> result = service.save(request);
+
+        Retrospective retro = (Retrospective) result.get("retrospective");
+        String feedbackMessage = (String) result.get("feedbackMessage");
 
         Map<String, Object> response = new HashMap<>();
         response.put("retrospectiveId", retro.getId());
+        response.put("feedbackMessage", feedbackMessage);
         response.put("message", "Retrospective generada y feedback almacenado.");
 
         return response;
     }
-
 
     @GetMapping("/{simulationId}")
     public Retrospective get(@PathVariable Long simulationId) {

@@ -81,6 +81,7 @@ public class User implements UserDetails {
 
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Feedback> feedbackList;
 
     @OneToMany(mappedBy = "user")

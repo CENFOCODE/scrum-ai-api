@@ -1,5 +1,7 @@
 package com.project.demo.logic.entity.feedback;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.demo.logic.entity.simulation.Simulation;
 import com.project.demo.logic.entity.user.User;
 import jakarta.persistence.*;
@@ -17,6 +19,7 @@ public class Feedback {
 
     @ManyToOne
     @JoinColumn(name = "simulation_id", nullable = false)
+    @JsonIgnore
     private Simulation simulation;
 
     @ManyToOne

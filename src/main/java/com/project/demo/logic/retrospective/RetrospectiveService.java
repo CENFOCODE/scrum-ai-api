@@ -11,6 +11,7 @@ import com.project.demo.logic.entity.simulationUser.SimulationUserRepository;
 import com.project.demo.logic.service.rtc.service.GroqService;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -33,13 +34,11 @@ public class RetrospectiveService {
         this.groqService = groqService;
     }
 
-    public Retrospective save(Map<String, Object> request) {
-
-        System.out.println("BODY RECIBIDO EN /save => " + request);
+    public Map<String, Object> save(Map<String, Object> request) {
 
         Object simIdObj = request.get("simulationId");
         Object simUserIdObj = request.get("simulationUserId");
-        Object notesObj = request.get("retrospective");  // ← CORREGIDO
+        Object notesObj = request.get("retrospective");
 
         if (simIdObj == null) throw new RuntimeException("simulationId es requerido");
         if (simUserIdObj == null) throw new RuntimeException("simulationUserId es requerido");
@@ -48,7 +47,6 @@ public class RetrospectiveService {
         Long simulationId = Long.valueOf(simIdObj.toString());
         Long simulationUserId = Long.valueOf(simUserIdObj.toString());
 
-        // Validar SimulationUser
         SimulationUser simUser = simulationUserRepository.findById(simulationUserId)
                 .orElseThrow(() -> new RuntimeException("SimulationUser no encontrado"));
 
@@ -56,9 +54,8 @@ public class RetrospectiveService {
             throw new RuntimeException("El simulationUser no pertenece a esta simulación.");
         }
 
-        // Convertir las notas a JSON
         ObjectMapper mapper = new ObjectMapper();
-        String notesJson = null;
+        String notesJson;
         try {
             notesJson = mapper.writeValueAsString(notesObj);
         } catch (JsonProcessingException e) {
@@ -68,9 +65,8 @@ public class RetrospectiveService {
         Retrospective retro = new Retrospective();
         retro.setSimulationId(simulationId);
         retro.setRetrospectiveJson(notesJson);
-        retro = retrospectiveRepository.save(retro);
+        retrospectiveRepository.save(retro);
 
-        // Construir prompt según el rol
         String role = simUser.getScrumRole();
         String basePrompt = getPromptByRole(role);
 
@@ -80,17 +76,21 @@ public class RetrospectiveService {
                         notesJson +
                         "\n\nDame retroalimentación concreta basada en estas notas.";
 
-        // Llamar a Groq
         AIResponseDTO aiResponse = groqService.askGroq(finalPrompt);
+        String feedbackText = aiResponse.getAnswer();
 
-        // Guardar feedback
+        // Guardar feedback en BD
         Feedback fb = new Feedback();
         fb.setSimulation(simUser.getSimulation());
         fb.setUser(simUser.getUser());
-        fb.setMessage(aiResponse.getAnswer());
+        fb.setMessage(feedbackText);
         feedbackRepository.save(fb);
 
-        return retro;
+        Map<String, Object> response = new HashMap<>();
+        response.put("retrospective", retro);
+        response.put("feedbackMessage", feedbackText);
+
+        return response;
     }
 
     public Retrospective getBySimulation(Long simulationId) {
