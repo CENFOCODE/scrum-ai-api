@@ -109,10 +109,19 @@ public class BacklogRestController {
     @PostMapping("/sprints")
     public ResponseEntity<?> createSprint(HttpServletRequest request) {
 
-        long count = backlogSprintRepository.count();
+        List<BacklogSprint> all = backlogSprintRepository.findAll();
+
+        long realCount = all.stream()
+                .filter(s -> !"BACKLOG".equalsIgnoreCase(s.getStatus()))
+                .filter(s -> !"COMPLETED_CONTAINER".equalsIgnoreCase(s.getStatus()))
+                .filter(s -> !"Backlog".equalsIgnoreCase(s.getName()))
+                .filter(s -> !"Sprints completados".equalsIgnoreCase(s.getName()))
+                .count();
+
+        String sprintName = "SC Sprint " + (realCount + 1);
 
         BacklogSprint sprint = new BacklogSprint();
-        sprint.setName("SC Sprint " + (count + 1));
+        sprint.setName(sprintName);
         sprint.setGoal("");
         sprint.setStatus("PENDING");
 
