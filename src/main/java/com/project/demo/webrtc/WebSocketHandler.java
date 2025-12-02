@@ -41,6 +41,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
     /** Mapa de salas: roomId -> lista de sesiones */
     private final Map<String, List<WebSocketSession>> rooms = new ConcurrentHashMap<>();
 
+    /** Mapeo de sala -> ceremonySessionId */
+    private final Map<String, Long> roomCeremonySessions = new ConcurrentHashMap<>();
+
     /** Mapeo de sesión -> username */
     private final Map<WebSocketSession, String> usernames = new ConcurrentHashMap<>();
 
@@ -91,6 +94,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             case "offer", "answer", "ice" -> broadcastToRoom(session, payload);
             case "end-call" -> handleEndCall(payload);
             case "ping" -> handlePing(session);
+            case "transcript"-> handleTranscript(session, payload);
             default -> System.out.println("⚠️ Tipo de mensaje no reconocido: " + type);
         }
     }
@@ -124,9 +128,22 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String user = (String) payload.get("host");
         String role = (String) payload.getOrDefault("role", "Host");
 
+        Object ceremonySessionIdObj = payload.get("ceremonySessionId");
+        Long ceremonySessionId = null;
+
+        if (ceremonySessionIdObj instanceof Number) {
+            ceremonySessionId = ((Number) ceremonySessionIdObj).longValue();
+        }
+
         rooms.put(room, new ArrayList<>(List.of(session)));
         usernames.put(session, user);
         roles.put(session, role);
+
+
+        if (ceremonySessionId != null) {
+            roomCeremonySessions.put(room, ceremonySessionId);
+
+        }
 
         session.sendMessage(new TextMessage(mapper.writeValueAsString(Map.of(
                 "type", "joinSuccess",
@@ -175,11 +192,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
         usernames.put(session, user);
         roles.put(session, role);
 
+        Long ceremonySessionId = roomCeremonySessions.get(room);
+
         broadcastToRoom(session, Map.of(
                 "type", "joinSuccess",
                 "message", user + " se ha unido a la sala " + room,
                 "user", user,
-                "role", role
+                "role", role,
+                "ceremonySessionId", ceremonySessionId
+
         ));
 
         System.out.println("👋 " + user + " se unió a la sala " + room + " como " + role);
@@ -222,7 +243,20 @@ public class WebSocketHandler extends TextWebSocketHandler {
             ))));
         }
     }
+    private void handleTranscript(WebSocketSession sender, Map<String, Object> payload) throws IOException {
+        String room = (String) payload.get("room");
 
+        if (room == null || !rooms.containsKey(room)) {
+            return;
+        }
+        String json = mapper.writeValueAsString(payload);
+
+        for (WebSocketSession session : rooms.get(room)) {
+            if (session.isOpen()) {
+                session.sendMessage(new TextMessage(json));
+            }
+        }
+    }
     /**
      * Mantiene viva la conexión WebSocket (ping/pong).
      */
@@ -247,6 +281,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 }
             }
             rooms.remove(room);
+            roomCeremonySessions.remove(room);
             System.out.println("🔴 Llamada finalizada y sala eliminada: " + room);
         }
     }
