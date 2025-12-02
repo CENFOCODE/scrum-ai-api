@@ -1,8 +1,12 @@
-package com.project.demo.logic.entity.scenarioTemplate;
+package com.project.demo.rest.scenarioTemplate;
 
+import com.project.demo.logic.entity.scenarioTemplate.ScenarioTemplate;
+import com.project.demo.logic.entity.scenarioTemplate.ScenarioTemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 public class ScenarioTemplateRestController {
@@ -14,7 +18,7 @@ public class ScenarioTemplateRestController {
      * Ejemplo: GET /scenario-template?scenarioId=1&difficulty=3&role=Developer
      */
     @GetMapping("/scenario-template")
-    public ResponseEntity<ScenarioTemplate> getTemplate(
+    public ResponseEntity<Optional<ScenarioTemplate>> getTemplate(
             @RequestParam("scenarioId") Long scenarioId,
             @RequestParam("difficulty") Integer difficulty,
             @RequestParam("role") String role) {
@@ -23,7 +27,7 @@ public class ScenarioTemplateRestController {
         Integer stepOrder = calculateStepOrder(difficulty, role);
 
         // Buscar template en base de datos
-        ScenarioTemplate template = scenarioTemplateRepository
+        Optional<ScenarioTemplate> template = scenarioTemplateRepository
                 .findByScenarioIdAndStepOrder(scenarioId, stepOrder);
 
         if (template != null) {

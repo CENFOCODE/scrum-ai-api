@@ -1,6 +1,8 @@
 package com.project.demo.logic.entity.simulation;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.demo.logic.entity.ceremonySession.CeremonySession;
 import com.project.demo.logic.entity.feedback.Feedback;
 import com.project.demo.logic.entity.history.History;
@@ -22,7 +24,7 @@ public class Simulation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "scenario_id", nullable = false)
     private Scenario scenario;
 
@@ -46,19 +48,28 @@ public class Simulation {
     private Double averageScore;
 
     @OneToMany(mappedBy = "simulation")
+    @JsonIgnore
     private List<Feedback> feedbackList;
 
     @OneToMany(mappedBy = "simulation")
+    @JsonIgnore
     private List<SimulationMetric> metrics;
 
     @OneToMany(mappedBy = "relatedSimulation")
+    @JsonIgnore
     private List<ImprovementPlan> improvementPlans;
 
     @OneToMany(mappedBy = "simulation")
+    @JsonIgnore
     private List<History> historyList;
 
     @OneToMany(mappedBy = "simulation")
+    @JsonIgnore
     private List<CeremonySession> sessions;
+
+    @OneToMany(mappedBy = "simulation", fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<SimulationUser> simulationUsers;
 
     public Simulation(Long id, Scenario scenario, User createdBy, String difficultyLevel, Date startDate, Date endDate, String status, Double averageScore) {
         this.id = id;
@@ -177,5 +188,12 @@ public class Simulation {
 
     public void setSessions(List<CeremonySession> sessions) {
         this.sessions = sessions;
+    }
+
+    public List<SimulationUser> getSimulationUsers() {
+        return simulationUsers;
+    }
+    public void setSimulationUsers(List<SimulationUser> simulationUsers) {
+        this.simulationUsers = simulationUsers;
     }
 }
