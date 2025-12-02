@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.project.demo.logic.service.rtc.service.GoogleService;
 
 import java.util.Collections;
 import java.util.Map;
@@ -34,6 +35,8 @@ public class AuthRestController {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private GoogleService googleService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -69,85 +72,16 @@ public class AuthRestController {
         return ResponseEntity.ok(loginResponse);
     }
     @PostMapping("/google")
-    public ResponseEntity<?> loginWithGoogle(@RequestBody Map<String, String> body) {
+    public ResponseEntity<LoginResponse> loginWithGoogle(@RequestBody Map<String, String> body) throws Exception {
         String credential = body.get("credential");
         if (credential == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Missing credential");
+            return ResponseEntity.badRequest().build();
         }
 
-        try {
-            // Verificar el token de Google
-            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
-                    new NetHttpTransport(),
-                    GsonFactory.getDefaultInstance()
-            )
-                    .setAudience(Collections.singletonList(clientId))
-                    .build();
-
-            GoogleIdToken idToken = verifier.verify(credential);
-            if (idToken == null) {
-                idToken = GoogleIdToken.parse(GsonFactory.getDefaultInstance(), credential);
-            }
-
-            GoogleIdToken.Payload payload = idToken.getPayload();
-
-            // Verificar audiencia y email
-            if (!payload.getAudience().equals(clientId)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid audience");
-            }
-
-            if (!Boolean.TRUE.equals(payload.getEmailVerified())) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email not verified by Google");
-            }
-
-            String email = payload.getEmail();
-            String fullName = (String) payload.get("given_name");
-            String lastName = (String) payload.get("family_name");
-            System.out.println("Login attempt from: " + email);
-
-
-            Optional<User> optionalUser = userRepository.findByEmail(email);
-            User user;
-
-            if (optionalUser.isPresent()) {
-                user = optionalUser.get();
-                System.out.println("Usuario existente: " + email);
-            } else {
-                Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
-                if (optionalRole.isEmpty()) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Role not found");
-                }
-
-
-                user = new User(
-                        fullName,
-                        lastName,
-                        email,
-                        true,
-                        "google",
-                        passwordEncoder.encode(UUID.randomUUID().toString()),
-                        optionalRole.get()
-                );
-
-
-                user = userRepository.save(user);
-
-            }
-
-            String jwtToken = jwtService.generateToken(user);
-            LoginResponse loginResponse = new LoginResponse();
-            loginResponse.setToken(jwtToken);
-            loginResponse.setExpiresIn(jwtService.getExpirationTime());
-            loginResponse.setAuthUser(user);
-
-            return ResponseEntity.ok(loginResponse);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error processing Google login: " + e.getMessage());
-        }
+        LoginResponse response = googleService.authenticateWithGoogle(credential);
+        return ResponseEntity.ok(response);
     }
+
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
