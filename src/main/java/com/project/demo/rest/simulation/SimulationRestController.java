@@ -1,6 +1,5 @@
 package com.project.demo.rest.simulation;
 
-
 import com.project.demo.logic.entity.history.History;
 import com.project.demo.logic.entity.http.GlobalResponseHandler;
 import com.project.demo.logic.entity.http.Meta;

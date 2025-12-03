@@ -44,6 +44,10 @@ public class DailySummaryRequest {
         this.board = board;
     }
 
+    public Long getSimulationUserId() {
+        return 0L;
+    }
+
     public static class Answers {
         private String yesterday;
         private String today;

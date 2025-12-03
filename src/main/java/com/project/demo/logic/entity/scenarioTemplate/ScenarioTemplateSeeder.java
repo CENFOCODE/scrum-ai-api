@@ -171,8 +171,6 @@ public class ScenarioTemplateSeeder {
     // ===========================
     private PromptMatrix getDailyPrompts() {
         PromptMatrix matrix = new PromptMatrix();
-        String generateTasksByStatus = "\nGenerame una lista de tareas separadas por guion donde status puede ser TODO,DONE,QA,IN_PROGRESS de la simulacion con el siguiente formato" +
-                "por ejemplo [TODO-revisar funcionalidad x,QA-revisar funcionalidad y,...] no uses las llaves en ningun otro lado para que pueda obtener los datos por medio de javascript" ;
 
         String generateTasksByStatus2 =
               "`Genera ademas una lista de tareas en distintos status en el siguiente formato exacto:\n" +
@@ -189,32 +187,13 @@ public class ScenarioTemplateSeeder {
                       "QA - descripcion\n" +
                       "DONE - descripcion`;";
 
-//        String generateTasksByStatus2 =
-//                "`Genera ademas una lista de tareas en el siguiente formato exacto:\n" +
-//                        "STATUS - descripcion\n" +
-//                        "\n" +
-//                        "Donde STATUS debe ser SOLO uno de estos:\n" +
-//                        "TODO, IN_PROGRESS, QA, DONE\n" +
-//                        "\n" +
-//                        "Importante:\n" +
-//                        "- Cada tarea debe ir en una línea separada.\n" +
-//                        "- Usa SOLO este formato:\n" +
-//                        "TODO - descripcion\n" +
-//                        "IN_PROGRESS - descripcion\n" +
-//                        "QA - descripcion\n" +
-//                        "DONE - descripcion`;";
-
-// ======================================================
-// ===============   DAILY — DIFICULTAD BAJA  ===========
-// ======================================================
-
 // SCRUM MASTER — BAJA
         matrix.setPrompt(1, "Scrum Master",
                 "Yo voy a ser Scrum Master en esta reunión de Daily. Dificultad: Baja.\n" +
                         "Dame una situación simulada simple del sprint donde existan tareas básicas relacionadas con pedidos y actualización del menú.\n" +
                         "Espera mis respuestas del Daily y luego dame feedback sobre cómo facilito la reunión.\n\n" +
                         "# Tareas del Daily\n" +
-                        generateTasksByStatus
+                        generateTasksByStatus2
         );
 
 // DEVELOPER — BAJA
@@ -232,14 +211,7 @@ public class ScenarioTemplateSeeder {
                         "Dame una situación simulada simple donde existan historias pequeñas relacionadas con organización de tareas.\n" +
                         "Espera mis respuestas del Daily y luego dame feedback sobre claridad de prioridades.\n\n" +
                         "# Tareas del Daily\n" +
-                        "- TODO:\n" +
-                        "  - \"Revisar prioridad de historias simples de organización\"\n" +
-                        "- IN_PROGRESS:\n" +
-                        "  - \"Aclarar criterios de aceptación de tareas básicas\"\n" +
-                        "- QA:\n" +
-                        "  - \"Validar historias implementadas por el equipo\"\n" +
-                        "- DONE:\n" +
-                        "  - \"Aceptar tareas completadas sin cambios\"\n"
+                        generateTasksByStatus2
         );
 
 // QA — BAJA
@@ -248,20 +220,8 @@ public class ScenarioTemplateSeeder {
                         "Dame una situación simulada simple con pruebas básicas del módulo de inventario.\n" +
                         "Espera mis respuestas y luego dame feedback sobre mi rol como QA.\n\n" +
                         "# Tareas del Daily\n" +
-                        "- TODO:\n" +
-                        "  - \"Planear pruebas básicas para manejo de productos\"\n" +
-                        "- IN_PROGRESS:\n" +
-                        "  - \"Ejecutar pruebas manuales simples\"\n" +
-                        "- QA:\n" +
-                        "  - \"Reportar bugs menores encontrados\"\n" +
-                        "- DONE:\n" +
-                        "  - \"Confirmar historias que cumplen criterios básicos\"\n"
+                        generateTasksByStatus2
         );
-
-
-// ======================================================
-// ===============   DAILY — DIFICULTAD MEDIA  ===========
-// ======================================================
 
 // SCRUM MASTER — MEDIA
         matrix.setPrompt(2, "Scrum Master",
@@ -269,14 +229,7 @@ public class ScenarioTemplateSeeder {
                         "Dame una situación simulada moderada del sprint con dependencias entre carrito de compras y métodos de pago.\n" +
                         "Espera mis respuestas y luego dame feedback sobre manejo de bloqueos.\n\n" +
                         "# Tareas del Daily\n" +
-                        "- TODO:\n" +
-                        "  - \"Identificar tareas bloqueadas por integración de pagos\"\n" +
-                        "- IN_PROGRESS:\n" +
-                        "  - \"Facilitar sincronización entre desarrolladores del checkout\"\n" +
-                        "- QA:\n" +
-                        "  - \"Dar seguimiento a impedimentos de pruebas de pago\"\n" +
-                        "- DONE:\n" +
-                        "  - \"Cerrar tareas desbloqueadas recientemente\"\n"
+                        generateTasksByStatus2
         );
 
 // DEVELOPER — MEDIA
@@ -285,14 +238,7 @@ public class ScenarioTemplateSeeder {
                         "Dame una situación simulada del sprint con complejidad moderada entre módulos de notas y asistencia.\n" +
                         "Espera mis respuestas del Daily y luego dame retro técnica.\n\n" +
                         "# Tareas del Daily\n" +
-                        "- TODO:\n" +
-                        "  - \"Iniciar implementación de componente intermedio de reportes\"\n" +
-                        "- IN_PROGRESS:\n" +
-                        "  - \"Resolver dependencias entre módulos académicos\"\n" +
-                        "- QA:\n" +
-                        "  - \"Enviar código a revisión técnica\"\n" +
-                        "- DONE:\n" +
-                        "  - \"Finalizar funcionalidad con complejidad media\"\n"
+                        generateTasksByStatus2
         );
 
 // PRODUCT OWNER — MEDIA
@@ -301,14 +247,7 @@ public class ScenarioTemplateSeeder {
                         "Dame una situación simulada donde existan cambios de prioridad por disponibilidad y quejas de clientes.\n" +
                         "Espera mis respuestas y luego dame retro sobre priorización.\n\n" +
                         "# Tareas del Daily\n" +
-                        "- TODO:\n" +
-                        "  - \"Analizar impacto de nuevas prioridades en reservas\"\n" +
-                        "- IN_PROGRESS:\n" +
-                        "  - \"Ajustar criterios de aceptación según feedback\"\n" +
-                        "- QA:\n" +
-                        "  - \"Validar historias revisadas con stakeholders\"\n" +
-                        "- DONE:\n" +
-                        "  - \"Confirmar prioridad final de funcionalidades revisadas\"\n"
+                        generateTasksByStatus2
         );
 
 // QA — MEDIA
@@ -317,20 +256,8 @@ public class ScenarioTemplateSeeder {
                         "Dame una situación simulada con pruebas funcionales complejas relacionadas con disponibilidad de camas.\n" +
                         "Espera mis respuestas y luego dame retro sobre calidad.\n\n" +
                         "# Tareas del Daily\n" +
-                        "- TODO:\n" +
-                        "  - \"Planear pruebas de funcionalidades críticas\"\n" +
-                        "- IN_PROGRESS:\n" +
-                        "  - \"Ejecutar pruebas funcionales más profundas\"\n" +
-                        "- QA:\n" +
-                        "  - \"Detectar bugs de impacto medio\"\n" +
-                        "- DONE:\n" +
-                        "  - \"Verificar historias listas para validación externa\"\n"
+                        generateTasksByStatus2
         );
-
-
-// ======================================================
-// ===============   DAILY — DIFICULTAD ALTA  ===========
-// ======================================================
 
 // SCRUM MASTER — ALTA
         matrix.setPrompt(3, "Scrum Master",
@@ -338,14 +265,7 @@ public class ScenarioTemplateSeeder {
                         "Dame una situación simulada compleja del sprint con bloqueos críticos relacionados con seguridad y transferencias.\n" +
                         "Espera mis respuestas y luego dame feedback avanzado.\n\n" +
                         "# Tareas del Daily\n" +
-                        "- TODO:\n" +
-                        "  - \"Identificar riesgos críticos que afectan el sprint\"\n" +
-                        "- IN_PROGRESS:\n" +
-                        "  - \"Facilitar resolución intensiva de bloqueos complejos\"\n" +
-                        "- QA:\n" +
-                        "  - \"Monitorear dependencias de alto impacto en seguridad\"\n" +
-                        "- DONE:\n" +
-                        "  - \"Documentar resoluciones críticas aplicadas\"\n"
+                        generateTasksByStatus2
         );
 
 // DEVELOPER — ALTA
@@ -354,14 +274,7 @@ public class ScenarioTemplateSeeder {
                         "Dame una situación simulada técnica compleja con problemas de ruteo avanzado y procesamiento en tiempo real.\n" +
                         "Espera mis respuestas y luego dame retro técnica experta.\n\n" +
                         "# Tareas del Daily\n" +
-                        "- TODO:\n" +
-                        "  - \"Planear abordaje de refactor crítico del motor de rutas\"\n" +
-                        "- IN_PROGRESS:\n" +
-                        "  - \"Resolver bugs severos en lógica de optimización\"\n" +
-                        "- QA:\n" +
-                        "  - \"Preparar código para pruebas avanzadas de performance\"\n" +
-                        "- DONE:\n" +
-                        "  - \"Completar feature técnica compleja y validada\"\n"
+                        generateTasksByStatus2
         );
 
 // PRODUCT OWNER — ALTA
@@ -370,14 +283,7 @@ public class ScenarioTemplateSeeder {
                         "Dame una situación simulada con prioridades conflictivas y urgencias médicas.\n" +
                         "Espera mis respuestas y luego dame retro avanzada.\n\n" +
                         "# Tareas del Daily\n" +
-                        "- TODO:\n" +
-                        "  - \"Reevaluar valor del negocio bajo presión clínica\"\n" +
-                        "- IN_PROGRESS:\n" +
-                        "  - \"Gestionar prioridades conflictivas entre módulos críticos\"\n" +
-                        "- QA:\n" +
-                        "  - \"Validar funcionalidades críticas con especialistas\"\n" +
-                        "- DONE:\n" +
-                        "  - \"Aceptar entregables estratégicos del sprint\"\n"
+                        generateTasksByStatus2
         );
 
 // QA — ALTA
@@ -387,13 +293,7 @@ public class ScenarioTemplateSeeder {
                         "Espera mis análisis y luego dame feedback experto.\n\n" +
                         "# Tareas del Daily\n" +
                         "- TODO:\n" +
-                        "  - \"Analizar riesgos severos del sistema\"\n" +
-                        "- IN_PROGRESS:\n" +
-                        "  - \"Validar correcciones críticas bajo presión\"\n" +
-                        "- QA:\n" +
-                        "  - \"Ejecutar pruebas avanzadas de calidad\"\n" +
-                        "- DONE:\n" +
-                        "  - \"Confirmar readiness para release crítico\"\n"
+                        generateTasksByStatus2
         );
         return matrix;
     }
