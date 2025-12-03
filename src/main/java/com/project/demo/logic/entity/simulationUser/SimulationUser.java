@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.project.demo.logic.entity.simulation.Simulation;
 import com.project.demo.logic.entity.user.User;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "simulation_users")
 public class SimulationUser {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,6 +29,7 @@ public class SimulationUser {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @CreationTimestamp
     @Column(nullable = false, name = "assigned_at", updatable = false)
     private Date assignedAt;
 
@@ -74,7 +77,7 @@ public class SimulationUser {
         this.scrumRole = scrumRole;
     }
 
-    
+
     public User getUser() {
         return user;
     }

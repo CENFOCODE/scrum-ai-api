@@ -97,6 +97,8 @@ public class SecurityConfiguration {
                         .requestMatchers("/planning-ticket/**").authenticated()
                         .requestMatchers("/backlog/**").authenticated()
 
+                        .requestMatchers(HttpMethod.GET, "/scenario/**").permitAll()
+
                         // Todo lo demás requiere autenticación
                         .anyRequest().authenticated()
                 )

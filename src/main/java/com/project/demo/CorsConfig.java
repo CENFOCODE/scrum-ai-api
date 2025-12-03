@@ -20,7 +20,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // :white_check_mark: Importante: permite CORS en TODAS las rutas
-                .allowedOrigins(allowedOrigins.split(",")) // :white_check_mark: Lee múltiples túneles
+                .allowedOrigins(allowedOrigins.split(",")) //  Lee múltiples túneles
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)

@@ -3,6 +3,7 @@ package com.project.demo.logic.entity.scenarioTemplate;
 import com.project.demo.logic.entity.scenario.Scenario;
 import com.project.demo.logic.entity.scenario.ScenarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 @Component
+@Order(3)
 public class ScenarioTemplateSeeder {
 
     @Autowired
@@ -170,69 +172,129 @@ public class ScenarioTemplateSeeder {
     private PromptMatrix getDailyPrompts() {
         PromptMatrix matrix = new PromptMatrix();
 
-        // DIFICULTAD BAJA
+        String generateTasksByStatus2 =
+              "`Genera ademas una lista de tareas en distintos status en el siguiente formato exacto:\n" +
+                      "STATUS - descripcion\n" +
+                      "\n" +
+                      "Donde STATUS debe ser SOLO uno de estos:\n" +
+                      "TODO, IN_PROGRESS, QA, DONE\n" +
+                      "\n" +
+                      "Importante:\n" +
+                      "- Cada tarea debe ir en una línea separada.\n" +
+                      "- Usa SOLO este formato:\n" +
+                      "TODO - descripcion\n" +
+                      "IN_PROGRESS - descripcion\n" +
+                      "QA - descripcion\n" +
+                      "DONE - descripcion`;";
+
+// SCRUM MASTER — BAJA
         matrix.setPrompt(1, "Scrum Master",
-                "Actúa como Scrum Master en una reunión de Daily. Dificultad: Baja.\n" +
-                        "Facilita las tres preguntas básicas: ¿Qué hiciste ayer?, ¿Qué harás hoy?, ¿Tienes impedimentos?\n" +
-                        "Mantén la reunión enfocada y breve.");
+                "Yo voy a ser Scrum Master en esta reunión de Daily. Dificultad: Baja.\n" +
+                        "Dame una situación simulada simple del sprint donde existan tareas básicas relacionadas con pedidos y actualización del menú.\n" +
+                        "Espera mis respuestas del Daily y luego dame feedback sobre cómo facilito la reunión.\n\n" +
+                        "# Tareas del Daily\n" +
+                        generateTasksByStatus2
+        );
 
+// DEVELOPER — BAJA
         matrix.setPrompt(1, "Developer",
-                "Actúa como Developer en una reunión de Daily. Dificultad: Baja.\n" +
-                        "Reporta tu progreso de manera concisa, comunica impedimentos simples y coordina trabajo básico.\n" +
-                        "Sé específico pero breve en tus respuestas.");
+                "Yo voy a ser Developer en esta reunión de Daily. Dificultad: Baja.\n" +
+                        "Dame una situación simulada básica del sprint con tareas sencillas como creación de citas y vista del calendario.\n" +
+                        "Espera mis respuestas del Daily y luego dame feedback técnico.\n\n" +
+                        "# Tareas del Daily\n" +
+                        generateTasksByStatus2
+        );
 
+// PRODUCT OWNER — BAJA
         matrix.setPrompt(1, "Product Owner",
-                "Actúa como Product Owner en una reunión de Daily. Dificultad: Baja.\n" +
-                        "Escucha el progreso del equipo, responde preguntas básicas sobre prioridades.\n" +
-                        "Clarifica dudas simples sobre historias de usuario.");
+                "Yo voy a ser Product Owner en esta reunión de Daily. Dificultad: Baja.\n" +
+                        "Dame una situación simulada simple donde existan historias pequeñas relacionadas con organización de tareas.\n" +
+                        "Espera mis respuestas del Daily y luego dame feedback sobre claridad de prioridades.\n\n" +
+                        "# Tareas del Daily\n" +
+                        generateTasksByStatus2
+        );
 
+// QA — BAJA
         matrix.setPrompt(1, "QA",
-                "Actúa como QA en una reunión de Daily. Dificultad: Baja.\n" +
-                        "Reporta progreso en testing, comunica bloqueos simples en pruebas.\n" +
-                        "Coordina entrega de funcionalidades para testear.");
+                "Yo voy a ser QA en esta reunión de Daily. Dificultad: Baja.\n" +
+                        "Dame una situación simulada simple con pruebas básicas del módulo de inventario.\n" +
+                        "Espera mis respuestas y luego dame feedback sobre mi rol como QA.\n\n" +
+                        "# Tareas del Daily\n" +
+                        generateTasksByStatus2
+        );
 
-        // DIFICULTAD MEDIA
+// SCRUM MASTER — MEDIA
         matrix.setPrompt(2, "Scrum Master",
-                "Actúa como Scrum Master en una reunión de Daily. Dificultad: Media.\n" +
-                        "Identifica impedimentos complejos, facilita sincronización entre tareas interdependientes.\n" +
-                        "Promueve colaboración efectiva y detecta riesgos del sprint.");
+                "Yo voy a ser Scrum Master en esta reunión de Daily. Dificultad: Media.\n" +
+                        "Dame una situación simulada moderada del sprint con dependencias entre carrito de compras y métodos de pago.\n" +
+                        "Espera mis respuestas y luego dame feedback sobre manejo de bloqueos.\n\n" +
+                        "# Tareas del Daily\n" +
+                        generateTasksByStatus2
+        );
 
+// DEVELOPER — MEDIA
         matrix.setPrompt(2, "Developer",
-                "Actúa como Developer en una reunión de Daily. Dificultad: Media.\n" +
-                        "Comunica progreso técnico detallado, identifica bloqueos de dependencias.\n" +
-                        "Propone soluciones colaborativas y ofrece ayuda a otros miembros.");
+                "Yo voy a ser Developer en esta reunión de Daily. Dificultad: Media.\n" +
+                        "Dame una situación simulada del sprint con complejidad moderada entre módulos de notas y asistencia.\n" +
+                        "Espera mis respuestas del Daily y luego dame retro técnica.\n\n" +
+                        "# Tareas del Daily\n" +
+                        generateTasksByStatus2
+        );
 
+// PRODUCT OWNER — MEDIA
         matrix.setPrompt(2, "Product Owner",
-                "Actúa como Product Owner en una reunión de Daily. Dificultad: Media.\n" +
-                        "Evalúa progreso hacia el Sprint Goal, ajusta prioridades si es necesario.\n" +
-                        "Toma decisiones sobre cambios de scope menores.");
+                "Yo voy a ser Product Owner en esta reunión de Daily. Dificultad: Media.\n" +
+                        "Dame una situación simulada donde existan cambios de prioridad por disponibilidad y quejas de clientes.\n" +
+                        "Espera mis respuestas y luego dame retro sobre priorización.\n\n" +
+                        "# Tareas del Daily\n" +
+                        generateTasksByStatus2
+        );
 
+// QA — MEDIA
         matrix.setPrompt(2, "QA",
-                "Actúa como QA en una reunión de Daily. Dificultad: Media.\n" +
-                        "Reporta resultados de testing complejos, identifica riesgos de calidad.\n" +
-                        "Coordina estrategias de testing con el equipo.");
+                "Yo voy a ser QA en esta reunión de Daily. Dificultad: Media.\n" +
+                        "Dame una situación simulada con pruebas funcionales complejas relacionadas con disponibilidad de camas.\n" +
+                        "Espera mis respuestas y luego dame retro sobre calidad.\n\n" +
+                        "# Tareas del Daily\n" +
+                        generateTasksByStatus2
+        );
 
-        // DIFICULTAD ALTA
+// SCRUM MASTER — ALTA
         matrix.setPrompt(3, "Scrum Master",
-                "Actúa como Scrum Master en una reunión de Daily. Dificultad: Alta.\n" +
-                        "Facilita resolución de impedimentos críticos, maneja conflictos del equipo.\n" +
-                        "Optimiza flujo de trabajo bajo presión y toma decisiones estratégicas rápidas.");
+                "Yo voy a ser Scrum Master en esta reunión de Daily. Dificultad: Alta.\n" +
+                        "Dame una situación simulada compleja del sprint con bloqueos críticos relacionados con seguridad y transferencias.\n" +
+                        "Espera mis respuestas y luego dame feedback avanzado.\n\n" +
+                        "# Tareas del Daily\n" +
+                        generateTasksByStatus2
+        );
 
+// DEVELOPER — ALTA
         matrix.setPrompt(3, "Developer",
-                "Actúa como Developer en una reunión de Daily. Dificultad: Alta.\n" +
-                        "Lidera resolución de problemas técnicos complejos, mentoriza a otros desarrolladores.\n" +
-                        "Toma decisiones arquitecturales críticas que afectan el sprint.");
+                "Yo voy a ser Developer en esta reunión de Daily. Dificultad: Alta.\n" +
+                        "Dame una situación simulada técnica compleja con problemas de ruteo avanzado y procesamiento en tiempo real.\n" +
+                        "Espera mis respuestas y luego dame retro técnica experta.\n\n" +
+                        "# Tareas del Daily\n" +
+                        generateTasksByStatus2
+        );
 
+// PRODUCT OWNER — ALTA
         matrix.setPrompt(3, "Product Owner",
-                "Actúa como Product Owner en una reunión de Daily. Dificultad: Alta.\n" +
-                        "Maneja presión de stakeholders, toma decisiones estratégicas rápidas.\n" +
-                        "Redefine prioridades bajo incertidumbre y maneja cambios críticos.");
+                "Yo voy a ser Product Owner en esta reunión de Daily. Dificultad: Alta.\n" +
+                        "Dame una situación simulada con prioridades conflictivas y urgencias médicas.\n" +
+                        "Espera mis respuestas y luego dame retro avanzada.\n\n" +
+                        "# Tareas del Daily\n" +
+                        generateTasksByStatus2
+        );
 
+// QA — ALTA
         matrix.setPrompt(3, "QA",
-                "Actúa como QA en una reunión de Daily. Dificultad: Alta.\n" +
-                        "Maneja crisis de calidad, diseña testing de emergencia.\n" +
-                        "Toma decisiones críticas sobre release readiness y gestiona riesgos mayores.");
-
+                "Yo voy a ser QA en esta reunión de Daily. Dificultad: Alta.\n" +
+                        "Dame una situación simulada con riesgos críticos, fallas mayores y presión por estabilidad del sistema.\n" +
+                        "Espera mis análisis y luego dame feedback experto.\n\n" +
+                        "# Tareas del Daily\n" +
+                        "- TODO:\n" +
+                        generateTasksByStatus2
+        );
         return matrix;
     }
 

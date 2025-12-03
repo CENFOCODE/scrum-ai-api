@@ -84,6 +84,7 @@ public class User implements UserDetails {
     @JsonIgnore
     private List<Feedback> feedbackList;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<SimulationMetric> metrics;
 
