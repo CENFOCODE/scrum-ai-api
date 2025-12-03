@@ -164,5 +164,30 @@ public class UserRestController {
         );
     }
 
+    @GetMapping("/{email}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email,
+                                            HttpServletRequest request)
+    {
+        Optional<User> foundUser = userRepository.findByEmail(email);
+
+        if (foundUser.isPresent()) {
+            User user = foundUser.get();
+            user.setPassword(null);
+
+            return new GlobalResponseHandler().handleResponse(
+                    "User retrieved successfully",
+                    user,
+                    HttpStatus.OK,
+                    request
+            );
+        }
+
+        return new GlobalResponseHandler().handleResponse(
+                "User not found",
+                HttpStatus.NOT_FOUND,
+                request
+        );
+    }
 
 }
