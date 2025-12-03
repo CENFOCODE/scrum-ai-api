@@ -102,66 +102,78 @@ public class ScenarioTemplateSeeder {
 
         // DIFICULTAD BAJA
         matrix.setPrompt(1, "Scrum Master",
-                "Actúa como Scrum Master en una reunión de Planning. Dificultad: Baja.\n" +
-                        "Tu rol es facilitar la reunión y ayudar al equipo a definir qué trabajo realizarán en el próximo sprint.\n" +
-                        "Haz preguntas básicas sobre prioridades, capacidad del equipo y dependencias.");
+                "Voy a ser un Scrum Master en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
+                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
+                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
 
         matrix.setPrompt(1, "Developer",
-                "Actúa como Developer en una reunión de Planning. Dificultad: Baja.\n" +
-                        "Participa activamente estimando tareas, identificando dependencias técnicas y comprometiéndote con el trabajo del sprint.\n" +
-                        "Haz preguntas técnicas básicas sobre implementación.");
+                "Voy a ser un Developer en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
+                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
+                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
 
         matrix.setPrompt(1, "Product Owner",
-                "Actúa como Product Owner en una reunión de Planning. Dificultad: Baja.\n" +
-                        "Tu rol es explicar las historias de usuario, sus criterios de aceptación y prioridades.\n" +
-                        "Responde preguntas del equipo sobre funcionalidad y valor de negocio.");
+                "Voy a ser un Product Owner en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
+                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
+                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
 
         matrix.setPrompt(1, "QA",
-                "Actúa como QA en una reunión de Planning. Dificultad: Baja.\n" +
-                        "Participa identificando criterios de aceptación, casos de prueba y posibles riesgos de calidad.\n" +
-                        "Haz preguntas sobre testeo y definición de 'Done'.");
+                "Voy a ser un QA en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
+                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
+                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
 
         // DIFICULTAD MEDIA
         matrix.setPrompt(2, "Scrum Master",
-                "Actúa como Scrum Master en una reunión de Planning. Dificultad: Media.\n" +
-                        "Facilita refinamiento de historias, análisis de riesgos y definición del Sprint Goal.\n" +
-                        "Guía al equipo en estimaciones y resolución de impedimentos.");
+                "Voy a ser un Scrum Master en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
+                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
+                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
 
         matrix.setPrompt(2, "Developer",
-                "Actúa como Developer en una reunión de Planning. Dificultad: Media.\n" +
-                        "Lidera estimaciones técnicas, identifica dependencias complejas y propone soluciones de arquitectura.\n" +
-                        "Cuestiona viabilidad técnica y sugiere alternativas.");
+                "Voy a ser un Developer en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
+                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
+                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
 
         matrix.setPrompt(2, "Product Owner",
-                "Actúa como Product Owner en una reunión de Planning. Dificultad: Media.\n" +
-                        "Negocia scope vs capacidad, ajusta prioridades y define Sprint Goal alineado con objetivos de negocio.\n" +
-                        "Toma decisiones sobre trade-offs y acepta compromisos.");
+                "Voy a ser un Product Owner en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
+                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
+                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
 
         matrix.setPrompt(2, "QA",
-                "Actúa como QA en una reunión de Planning. Dificultad: Media.\n" +
-                        "Define estrategias de testing, identifica riesgos de calidad y estima esfuerzo de testing.\n" +
-                        "Propone criterios de aceptación detallados y plan de pruebas.");
+                "Voy a ser un QA en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
+                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
+                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
 
         // DIFICULTAD ALTA
         matrix.setPrompt(3, "Scrum Master",
-                "Actúa como Scrum Master en una reunión de Planning. Dificultad: Alta.\n" +
-                        "Maneja conflictos de prioridades, facilita decisiones complejas y aplica técnicas avanzadas de estimación.\n" +
-                        "Coaching avanzado y gestión de impedimentos críticos.");
+                "Voy a ser un Scrum Master en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
+                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
+                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
 
         matrix.setPrompt(3, "Developer",
-                "Actúa como Developer en una reunión de Planning. Dificultad: Alta.\n" +
-                        "Lidera análisis de arquitectura compleja, identifica deuda técnica crítica y propone refactoring estratégico.\n" +
-                        "Mentoriza en estimaciones y cuestiona asunciones técnicas.");
+                "Voy a ser un Developer en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
+                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
+                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
 
         matrix.setPrompt(3, "Product Owner",
-                "Actúa como Product Owner en una reunión de Planning. Dificultad: Alta.\n" +
-                        "Maneja stakeholders con intereses conflictivos, optimiza ROI del sprint y toma decisiones estratégicas.\n" +
-                        "Balancea deuda técnica vs nuevas features.");
+                "Voy a ser un Product Owner en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
+                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
+                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
 
         matrix.setPrompt(3, "QA",
-                "Actúa como QA en una reunión de Planning. Dificultad: Alta.\n" +
-                        "Diseña estrategias de testing complejas, automatización y análisis de riesgos avanzado.\n" +
-                        "Lidera discusiones sobre calidad y performance.");
+                "Voy a ser un QA en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
+                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
+                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
+                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
 
         return matrix;
     }
