@@ -76,7 +76,7 @@ public class DailyTemplateService {
      */
     public ScenarioTemplate getDailyTemplate(int difficulty, String role) {
         int stepOrder = buildStepOrder(difficulty, role);
-        return repository.findByScenarioIdAndStepOrder(2L, stepOrder);
+        return repository.findByScenarioIdAndStepOrder(2L, stepOrder).orElse(null);
     }
 
     /**
