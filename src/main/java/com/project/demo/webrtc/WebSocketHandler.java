@@ -93,6 +93,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
             case "invite" -> handleInvite(session, payload);
             case "offer", "answer", "ice" -> broadcastToRoom(session, payload);
             case "camera-toggle" -> handleCameraToggle(session, payload);
+            case "transcript"-> broadcastToRoom(session,payload);
+            case "ai-analysis" -> broadcastToRoom(session, payload);
             case "end-call" -> handleEndCall(payload);
             case "leave-room" -> handleLeaveRoom(session, payload);
             case "ping" -> handlePing(session);
@@ -140,7 +142,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         logger.info("🏗️ Sala creada: " + room + " por " + user);
     }
-
     /**
      * Un usuario intenta unirse a una sala existente.
      *
@@ -264,7 +265,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         logger.info("📹 " + user + " cambió cámara a " + (camOn ? "ON" : "OFF") + " en sala " + room);
     }
-
     /**
      * Mantiene viva la conexión WebSocket (ping/pong).
      */
