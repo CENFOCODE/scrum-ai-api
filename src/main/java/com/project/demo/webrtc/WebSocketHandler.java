@@ -5,6 +5,8 @@ import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,21 +36,18 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Component
 public class WebSocketHandler extends TextWebSocketHandler {
-
+    private static final Logger logger = LoggerFactory.getLogger(WebSocketHandler.class);
     /** Convertidor JSON <-> Map */
     private final ObjectMapper mapper = new ObjectMapper();
 
     /** Mapa de salas: roomId -> lista de sesiones */
     private final Map<String, List<WebSocketSession>> rooms = new ConcurrentHashMap<>();
 
-    /** Mapeo de sala -> ceremonySessionId */
-    private final Map<String, Long> roomCeremonySessions = new ConcurrentHashMap<>();
-
     /** Mapeo de sesión -> username */
     private final Map<WebSocketSession, String> usernames = new ConcurrentHashMap<>();
 
     /** Mapeo de sesión -> rol (Scrum Master, Developer, etc.) */
-    private final Map<WebSocketSession, String> roles = new ConcurrentHashMap<>();
+//    private final Map<WebSocketSession, String> roles = new ConcurrentHashMap<>();
 
     /** Mapeo de sessionId -> sesión */
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
@@ -62,7 +61,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         sessions.put(session.getId(), session);
-        System.out.println("🟢 Nueva conexión WebSocket: " + session.getId());
+        logger.info("🟢 Nueva conexión WebSocket: " + session.getId());
     }
 
     /**
@@ -85,6 +84,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
         Map<String, Object> payload = mapper.readValue(message.getPayload(), Map.class);
         String type = (String) payload.get("type");
+        logger.info(type);
 
         switch (type) {
             case "register-user" -> handleRegisterUser(session, payload);
@@ -92,12 +92,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
             case "join" -> handleJoinRoom(session, payload);
             case "invite" -> handleInvite(session, payload);
             case "offer", "answer", "ice" -> broadcastToRoom(session, payload);
-            case "camera-toggle" -> broadcastToRoom(session, payload); // ← NUEVO
+            case "camera-toggle" -> handleCameraToggle(session, payload);
+            case "transcript"-> broadcastToRoom(session,payload);
+            case "ai-analysis" -> broadcastToRoom(session, payload);
             case "end-call" -> handleEndCall(payload);
             case "leave-room" -> handleLeaveRoom(session, payload);
             case "ping" -> handlePing(session);
-            case "transcript"-> handleTranscript(session, payload);
-            default -> System.out.println("⚠️ Tipo de mensaje no reconocido: " + type);
+            default -> logger.warn("⚠️ Tipo de mensaje no reconocido: " + type);
         }
     }
 
@@ -116,7 +117,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 "message", "Usuario registrado correctamente como " + username
         ))));
 
-        System.out.println("👤 Usuario registrado: " + username);
+        logger.info("👤 Usuario registrado: " + username);
     }
 
     /**
@@ -128,33 +129,19 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private void handleCreateRoom(WebSocketSession session, Map<String, Object> payload) throws IOException {
         String room = (String) payload.get("room");
         String user = (String) payload.get("host");
-        String role = (String) payload.getOrDefault("role", "Host");
-
-        Object ceremonySessionIdObj = payload.get("ceremonySessionId");
-        Long ceremonySessionId = null;
-
-        if (ceremonySessionIdObj instanceof Number) {
-            ceremonySessionId = ((Number) ceremonySessionIdObj).longValue();
-        }
+//        String role = (String) payload.getOrDefault("role", "Host");
 
         rooms.put(room, new ArrayList<>(List.of(session)));
         usernames.put(session, user);
-        roles.put(session, role);
-
-
-        if (ceremonySessionId != null) {
-            roomCeremonySessions.put(room, ceremonySessionId);
-
-        }
+//        roles.put(session, role);
 
         session.sendMessage(new TextMessage(mapper.writeValueAsString(Map.of(
                 "type", "joinSuccess",
                 "message", "Sala creada con éxito: " + room
         ))));
 
-        System.out.println("🏗️ Sala creada: " + room + " por " + user);
+        logger.info("🏗️ Sala creada: " + room + " por " + user);
     }
-
     /**
      * Un usuario intenta unirse a una sala existente.
      *
@@ -164,7 +151,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private void handleJoinRoom(WebSocketSession session, Map<String, Object> payload) throws IOException {
         String room = (String) payload.get("room");
         String user = (String) payload.get("user");
-        String role = (String) payload.getOrDefault("role", "Invitado");
+//        String role = (String) payload.getOrDefault("role", "Invitado");
         boolean camOn = payload.containsKey("camOn") ? (Boolean) payload.get("camOn") : true;
 
         if (!rooms.containsKey(room)) {
@@ -176,34 +163,31 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
 
         // ✅ REGLA DE NEGOCIO: Un solo rol por sala, excepto Developer
-        if (!role.equalsIgnoreCase("Developer")) {
-            boolean roleUsed = rooms.get(room).stream().anyMatch(s ->
-                    role.equalsIgnoreCase(roles.get(s))
-            );
-
-            if (roleUsed) {
-                session.sendMessage(new TextMessage(mapper.writeValueAsString(Map.of(
-                        "type", "roleError",
-                        "message", "El rol '" + role + "' ya está siendo utilizado en esta sala. Solo puede repetirse Developer."
-                ))));
-                return;
-            }
-        }
+//        if (!role.equalsIgnoreCase("Developer")) {
+//            boolean roleUsed = rooms.get(room).stream().anyMatch(s ->
+//                    role.equalsIgnoreCase(roles.get(s))
+//            );
+//
+//            if (roleUsed) {
+//                session.sendMessage(new TextMessage(mapper.writeValueAsString(Map.of(
+//                        "type", "roleError",
+//                        "message", "El rol '" + role + "' ya está siendo utilizado en esta sala. Solo puede repetirse Developer."
+//                ))));
+//                return;
+//            }
+//        }
 
         // ✅ Si pasa la validación, agregar a la sala
         rooms.get(room).add(session);
         usernames.put(session, user);
-        roles.put(session, role);
-
-        Long ceremonySessionId = roomCeremonySessions.get(room);
+//        roles.put(session, role);
 
         broadcastToRoom(session, Map.of(
                 "type", "joinSuccess",
                 "message", user + " se ha unido a la sala " + room,
                 "user", user,
-                "role", role,
-                "ceremonySessionId", ceremonySessionId,
                 "room", room
+//                "role", role
         ));
 
         broadcastToOthersInRoom(room, session, Map.of(
@@ -212,7 +196,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 "camOn", camOn
         ));
 
-        System.out.println("👋 " + user + " se unió a la sala " + room + " como " + role);
+        logger.info("👋 " + user + " se unió a la sala " + room + " como " );
     }
 
 
@@ -239,7 +223,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         for (Map.Entry<WebSocketSession, String> entry : usernames.entrySet()) {
             if (entry.getValue().equalsIgnoreCase(to)) {
                 entry.getKey().sendMessage(new TextMessage(mapper.writeValueAsString(inviteMsg)));
-                System.out.println("💌 Invitación enviada a " + to + " por " + from);
+                logger.info("💌 Invitación enviada a " + to + " por " + from);
                 sent = true;
                 break;
             }
@@ -265,7 +249,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         Boolean camOn = (Boolean) payload.get("camOn");
 
         if (room == null || !rooms.containsKey(room)) {
-            System.out.println("⚠️ Intento de camera-toggle en sala inexistente: " + room);
+            logger.warn("⚠️ Intento de camera-toggle en sala inexistente: " + room);
             return;
         }
 
@@ -279,21 +263,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // Enviar a todos en la sala EXCEPTO al remitente
         broadcastToOthersInRoom(room, session, cameraMsg);
 
-        System.out.println("📹 " + user + " cambió cámara a " + (camOn ? "ON" : "OFF") + " en sala " + room);
-    }
-    private void handleTranscript(WebSocketSession sender, Map<String, Object> payload) throws IOException {
-        String room = (String) payload.get("room");
-
-        if (room == null || !rooms.containsKey(room)) {
-            return;
-        }
-        String json = mapper.writeValueAsString(payload);
-
-        for (WebSocketSession session : rooms.get(room)) {
-            if (session.isOpen()) {
-                session.sendMessage(new TextMessage(json));
-            }
-        }
+        logger.info("📹 " + user + " cambió cámara a " + (camOn ? "ON" : "OFF") + " en sala " + room);
     }
     /**
      * Mantiene viva la conexión WebSocket (ping/pong).
@@ -311,11 +281,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String room = (String) payload.get("room");
 
         if (room == null || !rooms.containsKey(room)) {
-            System.out.println("⚠️ Intento de end-call en sala inexistente: " + room);
+            logger.warn("⚠️ Intento de end-call en sala inexistente: " + room);
             return;
         }
 
-        System.out.println("🔴 Finalizando llamada en sala: " + room);
+        logger.info("🔴 Finalizando llamada en sala: " + room);
 
         // Notificar a TODOS los participantes (incluido el host)
         Map<String, Object> endMsg = Map.of(
@@ -332,7 +302,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 try {
                     s.sendMessage(new TextMessage(json));
                 } catch (IOException e) {
-                    System.err.println("Error enviando endCall a sesión: " + e.getMessage());
+                    logger.info("Error enviando endCall a sesión: " + e.getMessage());
                 }
             }
         }
@@ -341,11 +311,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
         List<WebSocketSession> sessionsToRemove = new ArrayList<>(rooms.get(room));
         for (WebSocketSession s : sessionsToRemove) {
             usernames.remove(s);
-            roles.remove(s);
+//            roles.remove(s);
         }
 
         rooms.remove(room);
-        System.out.println("✅ Sala " + room + " eliminada completamente");
+        logger.info("✅ Sala " + room + " eliminada completamente");
     }
 
     /**
@@ -382,17 +352,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // Remover al usuario de la sala
         rooms.get(room).remove(session);
         usernames.remove(session);
-        roles.remove(session);
+//        roles.remove(session);
 
         // Si la sala queda vacía, se elimina
         if (rooms.get(room).isEmpty()) {
             rooms.remove(room);
-            roomCeremonySessions.remove(room);
-            System.out.println("🔴 Llamada finalizada y sala eliminada: " + room);
-            System.out.println("Sala " + room + " eliminada (sin participantes)");
+            logger.info("Sala " + room + " eliminada (sin participantes)");
         }
 
-        System.out.println(user + " salió de la sala " + room);
+        logger.info(user + " salió de la sala " + room);
     }
 
     /**
@@ -425,12 +393,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     WebSocketSession target = entry.getKey();
                     if (target.isOpen()) {
                         target.sendMessage(new TextMessage(json));
-                        System.out.println("📤 Mensaje dirigido a " + toUser + ": " + message.get("type"));
+                        logger.info("📤 Mensaje dirigido a " + toUser + ": " + message.get("type"));
                     }
                     return;
                 }
             }
-            System.out.println("⚠️ Usuario destino no encontrado: " + toUser);
+            logger.warn("⚠️ Usuario destino no encontrado: " + toUser);
             return;
         }
 
@@ -473,7 +441,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         boolean isInRoom = rooms.values().stream().anyMatch(list -> list.contains(session));
 
         if (isInRoom) {
-            System.out.println("⚠️ " + user + " parece desconectarse temporalmente. Esperando antes de cerrar...");
+            logger.warn("⚠️ " + user + " parece desconectarse temporalmente. Esperando antes de cerrar...");
 
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {
@@ -482,21 +450,21 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     boolean stillInRoom = rooms.values().stream().anyMatch(list -> list.contains(session));
                     if (!session.isOpen() && stillInRoom) {
                         usernames.remove(session);
-                        roles.remove(session);
+//                        roles.remove(session);
                         rooms.values().forEach(list -> list.remove(session));
                         sessions.remove(session.getId());
-                        System.out.println("❌ Sesión cerrada (expirada): " + user);
+                        logger.info("❌ Sesión cerrada (expirada): " + user);
                     } else {
-                        System.out.println("✅ " + user + " se reconectó a tiempo, sesión conservada.");
+                        logger.info("✅ " + user + " se reconectó a tiempo, sesión conservada.");
                     }
                 }
             }, 60000); // 1 min
         } else {
             usernames.remove(session);
-            roles.remove(session);
+//            roles.remove(session);
             rooms.values().forEach(list -> list.remove(session));
             sessions.remove(session.getId());
-            System.out.println("❌ Sesión cerrada (sin sala): " + user);
+            logger.info("❌ Sesión cerrada (sin sala): " + user);
         }
     }
 }
