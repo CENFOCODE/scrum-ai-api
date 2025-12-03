@@ -102,78 +102,67 @@ public class ScenarioTemplateSeeder {
 
         // DIFICULTAD BAJA
         matrix.setPrompt(1, "Scrum Master",
-                "Voy a ser un Scrum Master en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
-                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
-                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
-                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
+                "Dificultad: Baja.\n" +
+                        "Dame un lista simulada de un backlog de scrum. Sin la estimacion, sin las estimaciones, esas te las digo yo y me das feedback\n" +
+                        "Yo te voy a mandar notas, estimacion y dame tu feedback en base a las notas. No preguntas nada mas, solo el backlog\n");
+
 
         matrix.setPrompt(1, "Developer",
                 "Voy a ser un Developer en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
-                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
-                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
-                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
+                        "Dame un lista simulada de un backlog de scrum. Sin la estimacion, sin las estimaciones, esas te las digo yo y me das feedback\n" +
+                        "Yo te voy a mandar notas, estimacion y dame tu feedback en base a las notas. No preguntas nada mas, solo el backlog\n");
 
         matrix.setPrompt(1, "Product Owner",
                 "Voy a ser un Product Owner en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
-                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
-                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
-                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
+                        "Dame un lista simulada de un backlog de scrum. Sin la estimacion, sin las estimaciones, esas te las digo yo y me das feedback\n" +
+                        "Yo te voy a mandar notas, estimacion y dame tu feedback en base a las notas. No preguntas nada mas, solo el backlog\n");
 
         matrix.setPrompt(1, "QA",
                 "Voy a ser un QA en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
-                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
-                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
-                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
+                        "Dame un lista simulada de un backlog de scrum. Sin la estimacion, sin las estimaciones, esas te las digo yo y me das feedback\n" +
+                        "Yo te voy a mandar notas, estimacion y dame tu feedback en base a las notas. No preguntas nada mas, solo el backlog\n");
 
         // DIFICULTAD MEDIA
         matrix.setPrompt(2, "Scrum Master",
                 "Voy a ser un Scrum Master en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
-                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
-                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
-                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
+                        "Dame un lista simulada de un backlog de scrum. Sin la estimacion, sin las estimaciones, esas te las digo yo y me das feedback\n" +
+                        "Yo te voy a mandar notas, estimacion y dame tu feedback en base a las notas. No preguntas nada mas, solo el backlog\n");;
 
         matrix.setPrompt(2, "Developer",
                 "Voy a ser un Developer en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
-                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
-                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
-                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
+                        "Dame un lista simulada de un backlog de scrum. Sin la estimacion, sin las estimaciones, esas te las digo yo y me das feedback\n" +
+                        "Yo te voy a mandar notas, estimacion y dame tu feedback en base a las notas. No preguntas nada mas, solo el backlog\n");
 
         matrix.setPrompt(2, "Product Owner",
                 "Voy a ser un Product Owner en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
-                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
-                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
-                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
+                        "Dame un lista simulada de un backlog de scrum. Sin la estimacion, sin las estimaciones, esas te las digo yo y me das feedback\n" +
+                        "Yo te voy a mandar notas, estimacion y dame tu feedback en base a las notas. No preguntas nada mas, solo el backlog\n");
 
         matrix.setPrompt(2, "QA",
                 "Voy a ser un QA en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
-                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
-                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
-                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
+                        "Dame un lista simulada de un backlog de scrum. Sin la estimacion, sin las estimaciones, esas te las digo yo y me das feedback\n" +
+                        "Yo te voy a mandar notas, estimacion y dame tu feedback en base a las notas. No preguntas nada mas, solo el backlog\n");
 
         // DIFICULTAD ALTA
         matrix.setPrompt(3, "Scrum Master",
                 "Voy a ser un Scrum Master en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
-                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
-                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
-                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
+                        "Dame un lista simulada de un backlog de scrum. Sin la estimacion, sin las estimaciones, esas te las digo yo y me das feedback\n" +
+                        "Yo te voy a mandar notas, estimacion y dame tu feedback en base a las notas. No preguntas nada mas, solo el backlog\n");
 
         matrix.setPrompt(3, "Developer",
                 "Voy a ser un Developer en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
-                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
-                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
-                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
+                        "Dame un lista simulada de un backlog de scrum. Sin la estimacion, sin las estimaciones, esas te las digo yo y me das feedback\n" +
+                        "Yo te voy a mandar notas, estimacion y dame tu feedback en base a las notas. No preguntas nada mas, solo el backlog\n");
 
         matrix.setPrompt(3, "Product Owner",
                 "Voy a ser un Product Owner en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
-                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
-                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
-                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
+                        "Dame un lista simulada de un backlog de scrum. Sin la estimacion, sin las estimaciones, esas te las digo yo y me das feedback\n" +
+                        "Yo te voy a mandar notas, estimacion y dame tu feedback en base a las notas. No preguntas nada mas, solo el backlog\n");
 
         matrix.setPrompt(3, "QA",
                 "Voy a ser un QA en la siguiente ceremonia de planning. Dificultad: Baja.\n" +
-                        "Dame una situacion simulada para poder discutir y practicar con mis compañeros y dame retrospectiva y feedback al respecto.\n" +
-                        "Ocupo que me des tareas de un backlog y en que Sprint con su codigo para poder estimarlar la dificultad y discutir con mi equipo.\n" +
-                        "Yo te voy a mandar mis notas, estimacion y cosas discutidas en nuestro equipo y dame tu feedback en base a las mismas");
+                        "Dame un lista simulada de un backlog de scrum. Sin la estimacion, sin las estimaciones, esas te las digo yo y me das feedback\n" +
+                        "Yo te voy a mandar notas, estimacion y dame tu feedback en base a las notas. No preguntas nada mas, solo el backlog\n");
 
         return matrix;
     }
