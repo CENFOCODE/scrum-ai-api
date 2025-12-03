@@ -24,7 +24,6 @@ public class PasswordResetService {
         if (optionalUser.isEmpty()) return Optional.empty();
 
         String tempPassword = generateSecurePassword();
-        System.out.println("Contraseña generada: " + tempPassword);
 
         User user = optionalUser.get();
         user.setPassword(passwordEncoder.encode(tempPassword));

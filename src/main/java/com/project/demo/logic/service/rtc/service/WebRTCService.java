@@ -1,5 +1,7 @@
 package com.project.demo.logic.service.rtc.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -9,6 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service
 public class WebRTCService {
+
+    private static final Logger logger = LoggerFactory.getLogger(WebRTCService.class);
 
     // Mapa que simula las salas activas en memoria
     private final ConcurrentHashMap<String, String> activeRooms = new ConcurrentHashMap<>();
@@ -32,6 +36,6 @@ public class WebRTCService {
      */
     public void sendSignal(String roomId, String message) {
         // Aquí luego se integrará el WebSocket para enviar a los demás usuarios
-        System.out.println("📡 Señal enviada a sala " + roomId + ": " + message);
+        logger.info("📡 Señal enviada a sala " + roomId + ": " + message);
     }
 }
